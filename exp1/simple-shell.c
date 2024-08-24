@@ -97,11 +97,32 @@ int main (int argc, char **argv) {
     // here note that the first element/first argument of the command is the command itself
     int num_args_input =  parse_input(input, size_input, command); 
 
-
+    // ---Concatenating the command
+    char first_command [100];
+    strcpy(first_command,"/");
+    strcat(first_command, command[0]);
+    char path[100]; 
     // --- Checking which of the directories contains the desired command ---
+    int found = 0;
     for (int i = 0; i < num_dirs; i++) {
-        if (fopen(dirs_list[i], "r"))
+        strcpy(path, dirs_list[i]);
+        strcat(path,first_command);
+        printf("path: %s", path);
+        if (fopen(path, "r")) {
+            found = 1;
+            break;
+        } 
     }
+    printf("command[0]: %s\n", command[2]);
+    if (found) {
+        printf("exec\n");
+        execv("/usr/bin/ls",command);
+    }
+    else {
+
+    }
+
+
 
     return 0;
 }
