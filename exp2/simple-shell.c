@@ -9,9 +9,10 @@ Pedro da Rosa Pinheiro - 231081 - Turma A
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 
-#define MAX_COMMAND_SIZE 1000
-#define MAX_STRING_SIZE 100
+#define MAX_COMMAND_SIZE 1024
+#define MAX_STRING_SIZE 128
 #define FALSE 0
 #define TRUE 1
 
@@ -56,7 +57,7 @@ tries to open it with fopen(), and if the function returns anything but NULL
 PARAMETERS:
 command (char**): char double pointer taken as an array of strings that holds 
                 the command and all of its arguments as different strings
-num_elems_input (int): number of strings in 'command', that is, 1 (representing
+token_count_input (int): number of strings in 'command', that is, 1 (representing
                 the command itself) plus the amount of arguments passed by input.
 dirs_list (char**): char double pointer taken as an array of strings that holds
                 the list of directories that the command needs to be searched 
@@ -67,7 +68,7 @@ OUTPUT:
 found (int): int variable interpreted as boolean representing if the command was 
             found in any of the passed directories.
 */
-int search_dirs(char **command, int num_elems_input, char **dirs_list, int num_dirs) {
+int search_dirs(char **command, int token_count_input, char **dirs_list, int num_dirs) {
     // --- Concatenating the command ---
     char first_command[MAX_STRING_SIZE];
     strcpy(first_command, "/");
@@ -85,7 +86,7 @@ int search_dirs(char **command, int num_elems_input, char **dirs_list, int num_d
         }
     }
 
-    command[num_elems_input] = NULL;  // adding NULL into the end of the list of arguments
+    command[token_count_input] = NULL;  // adding NULL into the end of the list of arguments
     strcpy(command[0], command_path); // setting the whole path for the command in the list of args used in syscall execv()
 
     return found;
@@ -105,12 +106,15 @@ void simple_shell(char **argv) {
     while (TRUE) {
         // --- Printing shell prompt ---
         printf("simple-shell$: ");
+        fflush(stdout);
 
         // --- Receiving command from input ---
         char *input = (char*)malloc(MAX_COMMAND_SIZE);
         fgets(input, MAX_COMMAND_SIZE, stdin);
+        int input_size = strlen(input); // Removing '\n' from the end of the last argument
+        input[input_size - 1] = '\0';
 
-        if (!strcmp(input, "exit\n")) { // user asked to leave
+        if (!strcmp(input, "exit")) { // user asked to leave
             break;
         }
 
@@ -122,21 +126,39 @@ void simple_shell(char **argv) {
         }
 
         // --- Parsing through input and its arguments ---
-        int num_elems_input =  parse_and_crop(input, size_input, command, ' '); 
-        int last_command_size = strlen(command[num_elems_input - 1]);   // Removing '\n' from the end of the last argument
-        command[num_elems_input - 1][last_command_size - 1] = '\0';
+        int token_count_input =  parse_and_crop(input, size_input, command, ' '); 
+        // int last_command_size = strlen(command[num_elems_input - 1]);   // Removing '\n' from the end of the last argument
+        // command[num_elems_input - 1][last_command_size - 1] = '\0';
 
         // --- Searching directories for the command ---
-        int found = search_dirs(command, num_elems_input, dirs_list, num_dirs);
+        int found = search_dirs(command, token_count_input, dirs_list, num_dirs);
         if (!found) {
-            printf("Error: The input command was not found.\n");
+            printf("ERROR: The input command was not found.\n");
         } else {
+            int bg = 0;
             pid_t p = fork();
+
+            if (!strcmp(command[token_count_input - 1], "&")) { // last token == '&', meaning that the command should run in the background
+                bg = 1;
+                command[token_count_input - 1] = '\0';
+            }
+
             if (p == 0) {
-                execv(command[0], command);
+                // dealing with child process 
+                if (execv(command[0], command) == -1) {
+                    printf("ERROR: Could not run the command.\n");
+                }
                 exit(0);
+            } else if (p < 0) {
+                // error while creating child process
+                printf("ERROR: Could not create child process\n");
             } else {
-                wait(NULL);
+                // dealing with parent process 
+                if (bg) {
+                    printf("é background\n");
+                } else {
+                    wait(NULL);
+                }
             }
         }
     }
