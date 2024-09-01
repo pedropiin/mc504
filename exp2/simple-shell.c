@@ -11,6 +11,7 @@ Pedro da Rosa Pinheiro - 231081 - Turma A
 #include <sys/wait.h>
 #include <signal.h>
 
+#define _GNU_SOURCE
 #define MAX_COMMAND_SIZE 1024
 #define MAX_STRING_SIZE 128
 #define FALSE 0
@@ -92,12 +93,33 @@ int search_dirs(char **command, int token_count_input, char **dirs_list, int num
     return found;
 }
 
-void simple_shell(char **argv) {
+/*
+Function that frees all elements of an array dinamically allocated 
+array of strings, i.e., char **.
+PARAMETERS:
+arr (char**): array of strings that is going to be freed
+size (int): number of allocated spaces in the array
+RETURNS:
+void
+*/
+void free_mem(char **arr, int size) {
+    for (int i = 0; i < size; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+void simple_shell(char **argv, int argc) {
+    if (argc < 2) {
+        printf("No directories passed as arguments.\n");
+        exit(EXIT_FAILURE);
+    }
+
     // --- Allocating memory for list of directories taken as arguments ---
     int size_dirs = strlen(argv[1]);
-    char **dirs_list = (char**)malloc(sizeof(char*) * MAX_STRING_SIZE);
+    char **dirs_list = (char**)calloc(MAX_STRING_SIZE, sizeof(char*));
     for (int i = 0; i < size_dirs; i++) {
-        dirs_list[i] = (char*)malloc(MAX_STRING_SIZE);
+        dirs_list[i] = (char*)calloc(MAX_STRING_SIZE, sizeof(char));
     }
 
     // --- Parsing through arguments and getting directories ---
@@ -105,82 +127,75 @@ void simple_shell(char **argv) {
 
     while (TRUE) {
         // --- Printing shell prompt ---
+        int status;
         printf("simple-shell$: ");
         fflush(stdout);
 
         // --- Receiving command from input ---
-        char *input = (char*)malloc(MAX_COMMAND_SIZE);
+        char *input = (char*)calloc(MAX_COMMAND_SIZE, sizeof(char));
         fgets(input, MAX_COMMAND_SIZE, stdin);
         int input_size = strlen(input); // Removing '\n' from the end of the last argument
         input[input_size - 1] = '\0';
 
-        if (!strcmp(input, "exit")) { // user asked to leave
+        if (strcmp(input, "exit") == 0) { 
+            // user asked to leave
+            free(input);
             break;
         }
 
         // --- Allocating memory for command and its list of arguments ---
         int size_input = strlen(input);
-        char **command = (char**)malloc(sizeof(char*) * MAX_STRING_SIZE);
+        char **command = (char**)calloc(MAX_STRING_SIZE, sizeof(char*));
         for (int i = 0; i < size_input; i++) {
-            command[i] = (char*)malloc(MAX_STRING_SIZE);
+            command[i] = (char*)calloc(MAX_STRING_SIZE, sizeof(char));
         }
 
         // --- Parsing through input and its arguments ---
         int token_count_input =  parse_and_crop(input, size_input, command, ' '); 
-        // int last_command_size = strlen(command[num_elems_input - 1]);   // Removing '\n' from the end of the last argument
-        // command[num_elems_input - 1][last_command_size - 1] = '\0';
+
+        // --- Checking if command needs to run in the background ---
+        int bg = 0;
+        if (strcmp(command[token_count_input - 1], "&") == 0) { 
+            // last token == '&', meaning that the command should run in the background
+            bg = 1;
+            command[token_count_input - 1] = NULL;
+            command[token_count_input] = '\0';
+        }
 
         // --- Searching directories for the command ---
         int found = search_dirs(command, token_count_input, dirs_list, num_dirs);
         if (!found) {
             printf("ERROR: The input command was not found.\n");
         } else {
-            int bg = 0;
             pid_t p = fork();
-
-            if (!strcmp(command[token_count_input - 1], "&")) { // last token == '&', meaning that the command should run in the background
-                bg = 1;
-                command[token_count_input - 1] = '\0';
-            }
-
             if (p == 0) {
                 // dealing with child process 
+                // setpgid(0, 0);
                 if (execv(command[0], command) == -1) {
                     printf("ERROR: Could not run the command.\n");
                 }
-                exit(0);
+                exit(EXIT_SUCCESS);
             } else if (p < 0) {
                 // error while creating child process
                 printf("ERROR: Could not create child process\n");
             } else {
                 // dealing with parent process 
-                if (bg) {
-                    printf("é background\n");
-                } else {
-                    wait(NULL);
+                if (!bg) {
+                   waitpid(-1, &status, 0);
                 }
             }
         }
+
+        free(input);
+        free_mem(command, token_count_input);
     }
+
+    free_mem(dirs_list, size_dirs);
 }
 
 
 int main (int argc, char **argv) {
-    // while (true)
-        // print prompt shell
-        // receive command as input
-        // search command in the directories
-        // if command == exit
-            // break
-        // if not found
-            // print error messag
-        // if found
-            // fork()
-            // if pid == 0 
-                // execv command
-        
-
-    simple_shell(argv);
+    simple_shell(argv, argc);
 
     return 0;
 }
