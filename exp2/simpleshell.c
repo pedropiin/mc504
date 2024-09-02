@@ -109,6 +109,25 @@ void free_mem(char **arr, int size) {
     free(arr);
 }
 
+
+/*
+Function that handle the child process in order to stop it from becoming a zombie process.
+PARAMETERS:
+signal (int): int who identifies which signal is using tha handler
+RETURNS:
+void
+*/
+void signal_handler(int signal) {
+    int status;
+    while ((waitpid(-1, &status, WNOHANG)) > 0) {
+        if (WIFEXITED(status)) {
+            printf("Background process is done\n");
+        }
+    }
+    fflush(stdout);
+
+}
+
 void simple_shell(char **argv, int argc) {
     if (argc < 2) {
         printf("No directories passed as arguments.\n");
@@ -128,6 +147,7 @@ void simple_shell(char **argv, int argc) {
     while (TRUE) {
         // --- Printing shell prompt ---
         int status;
+        fflush(stdout);
         printf("simple-shell$: ");
         fflush(stdout);
 
@@ -141,6 +161,12 @@ void simple_shell(char **argv, int argc) {
             // user asked to leave
             free(input);
             break;
+        }
+
+        if (strcmp(input, "") == 0) { 
+            // user asked to leave
+            free(input);
+            continue;
         }
 
         // --- Allocating memory for command and its list of arguments ---
@@ -195,6 +221,7 @@ void simple_shell(char **argv, int argc) {
 
 
 int main (int argc, char **argv) {
+    signal(SIGCHLD, signal_handler);
     simple_shell(argv, argc);
 
     return 0;
