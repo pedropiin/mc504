@@ -111,7 +111,9 @@ void free_mem(char **arr, int size) {
 
 
 /*
-Function that handle the child process in order to stop it from becoming a zombie process.
+Function that handles the child background process in order to stop 
+it from becoming a zombie process or interfering with the shell
+prompt.
 PARAMETERS:
 signal (int): int who identifies which signal is using tha handler
 RETURNS:
@@ -119,13 +121,8 @@ void
 */
 void signal_handler(int signal) {
     int status;
-    while ((waitpid(-1, &status, WNOHANG)) > 0) {
-        if (WIFEXITED(status)) {
-            printf("Background process is done\n");
-        }
-    }
+    while ((waitpid(-1, &status, WNOHANG)) > 0);
     fflush(stdout);
-
 }
 
 void simple_shell(char **argv, int argc) {
@@ -151,6 +148,8 @@ void simple_shell(char **argv, int argc) {
         printf("simple-shell$: ");
         fflush(stdout);
 
+        signal(SIGCHLD, signal_handler);
+
         // --- Receiving command from input ---
         char *input = (char*)calloc(MAX_COMMAND_SIZE, sizeof(char));
         fgets(input, MAX_COMMAND_SIZE, stdin);
@@ -164,7 +163,7 @@ void simple_shell(char **argv, int argc) {
         }
 
         if (strcmp(input, "") == 0) { 
-            // user asked to leave
+            // empty input
             free(input);
             continue;
         }
@@ -196,7 +195,6 @@ void simple_shell(char **argv, int argc) {
             pid_t p = fork();
             if (p == 0) {
                 // dealing with child process 
-                // setpgid(0, 0);
                 if (execv(command[0], command) == -1) {
                     printf("ERROR: Could not run the command.\n");
                 }
@@ -211,17 +209,14 @@ void simple_shell(char **argv, int argc) {
                 }
             }
         }
-
         free(input);
         free_mem(command, token_count_input);
     }
-
     free_mem(dirs_list, size_dirs);
 }
 
 
 int main (int argc, char **argv) {
-    signal(SIGCHLD, signal_handler);
     simple_shell(argv, argc);
 
     return 0;
