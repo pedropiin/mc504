@@ -6,8 +6,14 @@
 #ifndef RANDOM_STRING_H
 #define RANDOM_STRING_H
 
-#define STRING_SIZE 100
+#include <stddef.h>
 
-void random_string();
+#define STRING_SIZE 101
+#define NUM_STRINGS 100
+#define NUM_PERMUT 50
 
-#endif RANDOM_STRING_H
+void generate_random_string(char s[STRING_SIZE], const char char_set[], const size_t size_char_set);
+
+void write_random_string();
+
+#endif 
