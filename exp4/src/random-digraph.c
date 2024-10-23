@@ -3,20 +3,16 @@
 
 #include "random-digraph.h"
 
-#include <time.h>
 #include <stdlib.h>
 
 void gen_random_digraph(int graph[][MAX_VERT], int *num_vertices, int *num_edges) {
-    // --- Initializing random ---
-    srandom(time(NULL));
-
     // --- Initializing graph parameters ---
-    *num_vertices = random() % MAX_VERT;
+    *num_vertices = rand() % MAX_VERT;
     if (*num_vertices < MIN_VERT) {
         *num_vertices += MIN_VERT;
     }
 
-    *num_edges = random() % MAX_EDGE;
+    *num_edges = rand() % MAX_EDGE;
     if (*num_edges < MIN_EDGE) {
         *num_edges += MIN_EDGE;
     }
@@ -38,8 +34,8 @@ void gen_random_digraph(int graph[][MAX_VERT], int *num_vertices, int *num_edges
     // --- Initializing random directed edges ---
     int new_edge_u, new_edge_v;
     for (int i = 0; i < *num_edges; i++) {
-        new_edge_u = random() % *num_vertices;
-        new_edge_v = random() % *num_vertices;
+        new_edge_u = rand() % *num_vertices;
+        new_edge_v = rand() % *num_vertices;
         graph[new_edge_u][new_edge_v] = 1;
     }
 }
