@@ -4,19 +4,44 @@
 // EXP 4's boundaries
 
 #include "write-random-string.h"
-#include "user.h"
 #include "types.h"
+#include "user.h"
 #include "fcntl.h"
 #include "stat.h"
 
-// Emulate O_APPEND functionality
-int open_append(const char *path) {
-    int fd = open(path, O_WRONLY | O_CREATE);
-    if (fd >= 0) {
-        // Move the file pointer to the end of the file
-        lseek(fd, 0, 2); // 2 is SEEK_END
+int add_line(char *file_path, char *new_line) {
+    int fp = open(file_path, O_RDONLY);  
+    if (fp < 0) {
+        printf(1, "Failed to open file for reading.\n");
+        return -1;
     }
-    return fd;
+
+    char lines[NUM_STRINGS][STRING_SIZE];
+    int line_idx=0;
+
+    // --- Read all lines from the file ---
+    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
+        line_idx++;
+    }
+    close(fp); 
+
+    // --- Add the new line in memory ---
+    strcpy(lines[line_idx], new_line);
+    line_idx++;
+
+    // --- Overwrite file with new lines ---
+    fp = open(file_path, O_WRONLY);  
+    if (fp < 0) {
+        printf(1, "Failed to open file for writing.\n");
+        return -1;
+    }
+
+    for (int i = 0; i < line_idx; i++) {
+        write(fp, lines[i], STRING_SIZE);
+    }
+
+    close(fp);
+    return 0;
 }
 
 
@@ -33,17 +58,10 @@ int write_random_string(char file_path[]) {
     // --- Defining set of possible characters for the string --- 
     const char char_set[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?'!@#$&*()-+{}[].;,<>:|";
     const size_t size_char_set = sizeof(char_set) - 1;
-    
-
-    int fp = open_append(file_path);
-    if (fp < 0) {
-        printf(1,"Failed when trying to open file in the 'writing-random-string' routine. Aborting.\n");
-        return -1;
-    }
     char s[STRING_SIZE];
+   
     generate_random_string(s, char_set, size_char_set);
-    write(fp, s, strlen(s));
-    close(fp);
+    add_line(file_path, s);
 
     return 0;
 }

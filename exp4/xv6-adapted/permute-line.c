@@ -1,62 +1,61 @@
 #include "permute-line.h"
+#include "types.h"
+#include "user.h"
+#include "fcntl.h"
+#include "stat.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 
 int permute_line(char file_path[]) {
-    FILE *fp;
-    fp = fopen(file_path, "r+");
-    if (fp == NULL) {
-        printf("Failed when trying to open file in the permutation routine. Aborting\n");
+    int fp = open(file_path, O_RDONLY);
+    if (fp < 0 ) {
+        printf(1, "Failed when trying to open file in the permutation routine. Aborting\n");
         return -1;
     }
 
-    fpos_t fpos1, fpos2;
-    char buff1[STRING_SIZE];
-    char buff2[STRING_SIZE];
+    char lines[NUM_STRINGS][STRING_SIZE];
+    int line_idx=0;
+
+    // --- Read all lines from the file ---
+    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
+        line_idx++;
+    }
 
     // --- Getting random indices representing random strings ---
-    int line1 = rand() % NUM_STRINGS;
-    int line2 = rand() % NUM_STRINGS;
+    int line1 = random() % NUM_STRINGS;
+    int line2 = random() % NUM_STRINGS;
 
-    // --- Making sure that line1 points to the the line that appears first ---
-    if (line1 > line2) {
-        int tmp = line2;
-        line2 = line1;
-        line1 = tmp;
+    // --- Swap lines in memory ---
+    if (line1 != line2) {
+        char temp[STRING_SIZE];
+        strcpy(temp, lines[line1]);
+        strcpy(lines[line1], lines[line2]);
+        strcpy(lines[line2], temp);
     }
-
-    // --- Skipping to the first line ---
-    char *ctmp;
-    for (int i = 0; i < (line1 - 1); i++) {
-        ctmp = fgets(buff1, STRING_SIZE, fp);
-        if (ctmp == NULL) {
-            printf("Unable to read line %d from file.\n", i);
-        } 
-    }
-
-    // --- Getting the first line ---
-    fgetpos(fp, &fpos1);
-    ctmp = fgets(buff1, STRING_SIZE, fp);
-
-    for (int i = 0; i < (line2 - line1 - 1); i++) {
-        ctmp = fgets(buff2, STRING_SIZE, fp);
-        if (ctmp == NULL) {
-            printf("Unable to read line %d from file.\n", i);
-        }
-    }
-
-    // --- Getting the second line --
-    fgetpos(fp, &fpos2);
-    ctmp = fgets(buff2, STRING_SIZE, fp);
     
-    // --- Changing lines ---
-    fsetpos(fp, &fpos1);
-    fputs(buff2, fp);
-    fsetpos(fp, &fpos2);
-    fputs(buff1, fp);
+    // --- Close and reopen to reset the file pointer ---
+    close(fp);  
+    fp = open(file_path, O_RDWR);
 
-    fclose(fp);
 
+    // --- Fill buffer with zeroes to clear the file ---
+    struct stat st;
+    fstat(fp, &st);
+    char *buffer = malloc(0);
+    memset(buffer, 0, 0);  
+    write(fp, buffer, 0);
+    free(buffer);
+
+
+    // --- Write the modified content back to the file ---
+    if (fp < 0) {
+        printf(1, "Failed to open file for writing in permutation routine.\n");
+        return -1;
+    }
+
+    for (int i = 0; i < line_idx; i++) {
+        write(fp, lines[i], STRING_SIZE);
+    }
+
+    close(fp);
     return 0;
 }

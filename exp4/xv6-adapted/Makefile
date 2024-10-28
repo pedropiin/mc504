@@ -143,7 +143,7 @@ tags: $(OBJS) entryother.S _init
 vectors.S: vectors.pl
 	./vectors.pl > vectors.S
 
-ULIB = ulib.o usys.o printf.o umalloc.o dijkstra.o random-digraph.o rand.o 
+ULIB = ulib.o usys.o printf.o umalloc.o dijkstra.o random-digraph.o rand.o permute-line.o write-random-string.o io-bound.o cpu-bound.o
 
 _%: %.o $(ULIB)
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^

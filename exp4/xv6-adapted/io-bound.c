@@ -4,8 +4,6 @@
 #include "types.h"
 #include "user.h"
 
-// #include <unistd.h>
-// #include <stdio.h>
 
 void io_bound(char file_path[]) {
     // --- Writing 100 random strings ---

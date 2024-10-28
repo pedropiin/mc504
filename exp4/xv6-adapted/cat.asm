@@ -70,7 +70,7 @@ main(int argc, char *argv[])
       printf(1, "cat: cannot open %s\n", argv[i]);
   69:	50                   	push   %eax
   6a:	ff 33                	push   (%ebx)
-  6c:	68 1b 0b 00 00       	push   $0xb1b
+  6c:	68 1b 10 00 00       	push   $0x101b
   71:	6a 01                	push   $0x1
   73:	e8 48 04 00 00       	call   4c0 <printf>
       exit();
@@ -97,7 +97,7 @@ main(int argc, char *argv[])
     if (write(1, buf, n) != n) {
   a0:	83 ec 04             	sub    $0x4,%esp
   a3:	53                   	push   %ebx
-  a4:	68 40 0f 00 00       	push   $0xf40
+  a4:	68 c0 16 00 00       	push   $0x16c0
   a9:	6a 01                	push   $0x1
   ab:	e8 d3 02 00 00       	call   383 <write>
   b0:	83 c4 10             	add    $0x10,%esp
@@ -106,7 +106,7 @@ main(int argc, char *argv[])
   while((n = read(fd, buf, sizeof(buf))) > 0) {
   b7:	83 ec 04             	sub    $0x4,%esp
   ba:	68 00 02 00 00       	push   $0x200
-  bf:	68 40 0f 00 00       	push   $0xf40
+  bf:	68 c0 16 00 00       	push   $0x16c0
   c4:	56                   	push   %esi
   c5:	e8 b1 02 00 00       	call   37b <read>
   ca:	83 c4 10             	add    $0x10,%esp
@@ -123,7 +123,7 @@ main(int argc, char *argv[])
   db:	c3                   	ret    
       printf(1, "cat: write error\n");
   dc:	83 ec 08             	sub    $0x8,%esp
-  df:	68 f8 0a 00 00       	push   $0xaf8
+  df:	68 f8 0f 00 00       	push   $0xff8
   e4:	6a 01                	push   $0x1
   e6:	e8 d5 03 00 00       	call   4c0 <printf>
       exit();
@@ -131,7 +131,7 @@ main(int argc, char *argv[])
     printf(1, "cat: read error\n");
   f0:	50                   	push   %eax
   f1:	50                   	push   %eax
-  f2:	68 0a 0b 00 00       	push   $0xb0a
+  f2:	68 0a 10 00 00       	push   $0x100a
   f7:	6a 01                	push   $0x1
   f9:	e8 c2 03 00 00       	call   4c0 <printf>
     exit();
@@ -722,7 +722,7 @@ printint(int fd, int xx, int base, int sgn)
  442:	31 d2                	xor    %edx,%edx
  444:	89 cf                	mov    %ecx,%edi
  446:	f7 75 c4             	divl   -0x3c(%ebp)
- 449:	0f b6 92 90 0b 00 00 	movzbl 0xb90(%edx),%edx
+ 449:	0f b6 92 90 10 00 00 	movzbl 0x1090(%edx),%edx
  450:	89 45 c0             	mov    %eax,-0x40(%ebp)
  453:	89 d8                	mov    %ebx,%eax
  455:	8d 5b 01             	lea    0x1(%ebx),%ebx
@@ -855,7 +855,7 @@ printf(int fd, const char *fmt, ...)
  531:	83 e8 63             	sub    $0x63,%eax
  534:	83 f8 15             	cmp    $0x15,%eax
  537:	77 17                	ja     550 <printf+0x90>
- 539:	ff 24 85 38 0b 00 00 	jmp    *0xb38(,%eax,4)
+ 539:	ff 24 85 38 10 00 00 	jmp    *0x1038(,%eax,4)
         putc(fd, c);
       }
       state = 0;
@@ -983,7 +983,7 @@ printf(int fd, const char *fmt, ...)
  643:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
  647:	90                   	nop
           s = "(null)";
- 648:	ba 30 0b 00 00       	mov    $0xb30,%edx
+ 648:	ba 30 10 00 00       	mov    $0x1030,%edx
         while(*s != 0){
  64d:	89 5d d4             	mov    %ebx,-0x2c(%ebp)
  650:	b8 28 00 00 00       	mov    $0x28,%eax
@@ -1004,7 +1004,7 @@ free(void *ap)
 
   bp = (Header*)ap - 1;
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
- 661:	a1 40 11 00 00       	mov    0x1140,%eax
+ 661:	a1 c0 18 00 00       	mov    0x18c0,%eax
 {
  666:	89 e5                	mov    %esp,%ebp
  668:	57                   	push   %edi
@@ -1049,7 +1049,7 @@ free(void *ap)
 }
  6a1:	5b                   	pop    %ebx
   freep = p;
- 6a2:	89 15 40 11 00 00    	mov    %edx,0x1140
+ 6a2:	89 15 c0 18 00 00    	mov    %edx,0x18c0
 }
  6a8:	5e                   	pop    %esi
  6a9:	5f                   	pop    %edi
@@ -1081,7 +1081,7 @@ free(void *ap)
     p->s.size += bp->s.size;
  6d9:	03 43 fc             	add    -0x4(%ebx),%eax
   freep = p;
- 6dc:	89 15 40 11 00 00    	mov    %edx,0x1140
+ 6dc:	89 15 c0 18 00 00    	mov    %edx,0x18c0
     p->s.size += bp->s.size;
  6e2:	89 42 04             	mov    %eax,0x4(%edx)
     p->s.ptr = bp->s.ptr;
@@ -1114,7 +1114,7 @@ malloc(uint nbytes)
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
  6f9:	8b 45 08             	mov    0x8(%ebp),%eax
   if((prevp = freep) == 0){
- 6fc:	8b 3d 40 11 00 00    	mov    0x1140,%edi
+ 6fc:	8b 3d c0 18 00 00    	mov    0x18c0,%edi
   nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
  702:	8d 70 07             	lea    0x7(%eax),%esi
  705:	c1 ee 03             	shr    $0x3,%esi
@@ -1151,7 +1151,7 @@ malloc(uint nbytes)
       return (void*)(p + 1);
     }
     if(p == freep)
- 741:	8b 3d 40 11 00 00    	mov    0x1140,%edi
+ 741:	8b 3d c0 18 00 00    	mov    0x18c0,%edi
  747:	89 c2                	mov    %eax,%edx
  749:	39 d7                	cmp    %edx,%edi
  74b:	75 eb                	jne    738 <malloc+0x48>
@@ -1171,7 +1171,7 @@ malloc(uint nbytes)
  769:	50                   	push   %eax
  76a:	e8 f1 fe ff ff       	call   660 <free>
   return freep;
- 76f:	8b 15 40 11 00 00    	mov    0x1140,%edx
+ 76f:	8b 15 c0 18 00 00    	mov    0x18c0,%edx
       if((p = morecore(nunits)) == 0)
  775:	83 c4 10             	add    $0x10,%esp
  778:	85 d2                	test   %edx,%edx
@@ -1203,7 +1203,7 @@ malloc(uint nbytes)
         p->s.size = nunits;
  79c:	89 70 04             	mov    %esi,0x4(%eax)
       freep = prevp;
- 79f:	89 15 40 11 00 00    	mov    %edx,0x1140
+ 79f:	89 15 c0 18 00 00    	mov    %edx,0x18c0
 }
  7a5:	8d 65 f4             	lea    -0xc(%ebp),%esp
       return (void*)(p + 1);
@@ -1215,17 +1215,17 @@ malloc(uint nbytes)
  7ae:	5d                   	pop    %ebp
  7af:	c3                   	ret    
     base.s.ptr = freep = prevp = &base;
- 7b0:	c7 05 40 11 00 00 44 	movl   $0x1144,0x1140
- 7b7:	11 00 00 
+ 7b0:	c7 05 c0 18 00 00 c4 	movl   $0x18c4,0x18c0
+ 7b7:	18 00 00 
     base.s.size = 0;
- 7ba:	bf 44 11 00 00       	mov    $0x1144,%edi
+ 7ba:	bf c4 18 00 00       	mov    $0x18c4,%edi
     base.s.ptr = freep = prevp = &base;
- 7bf:	c7 05 44 11 00 00 44 	movl   $0x1144,0x1144
- 7c6:	11 00 00 
+ 7bf:	c7 05 c4 18 00 00 c4 	movl   $0x18c4,0x18c4
+ 7c6:	18 00 00 
   for(p = prevp->s.ptr; ; prevp = p, p = p->s.ptr){
  7c9:	89 fa                	mov    %edi,%edx
     base.s.size = 0;
- 7cb:	c7 05 48 11 00 00 00 	movl   $0x0,0x1148
+ 7cb:	c7 05 c8 18 00 00 00 	movl   $0x0,0x18c8
  7d2:	00 00 00 
     if(p->s.size >= nunits){
  7d5:	e9 42 ff ff ff       	jmp    71c <malloc+0x2c>
@@ -1637,7 +1637,7 @@ int seed = 1;
 int random()
 {
     seed = (seed * 1664525 + 1013904223)%2000000000;
- ac0:	69 0d 30 0f 00 00 0d 	imul   $0x19660d,0xf30,%ecx
+ ac0:	69 0d a4 16 00 00 0d 	imul   $0x19660d,0x16a4,%ecx
  ac7:	66 19 00 
  aca:	ba a1 2f b8 44       	mov    $0x44b82fa1,%edx
  acf:	81 c1 5f f3 6e 3c    	add    $0x3c6ef35f,%ecx
@@ -1651,6 +1651,658 @@ int random()
  ae5:	69 d0 00 94 35 77    	imul   $0x77359400,%eax,%edx
  aeb:	89 c8                	mov    %ecx,%eax
  aed:	29 d0                	sub    %edx,%eax
- aef:	a3 30 0f 00 00       	mov    %eax,0xf30
+ aef:	a3 a4 16 00 00       	mov    %eax,0x16a4
     return seed;
  af4:	c3                   	ret    
+ af5:	66 90                	xchg   %ax,%ax
+ af7:	66 90                	xchg   %ax,%ax
+ af9:	66 90                	xchg   %ax,%ax
+ afb:	66 90                	xchg   %ax,%ax
+ afd:	66 90                	xchg   %ax,%ax
+ aff:	90                   	nop
+
+00000b00 <permute_line>:
+#include "user.h"
+#include "fcntl.h"
+#include "stat.h"
+
+
+int permute_line(char file_path[]) {
+ b00:	55                   	push   %ebp
+ b01:	89 e5                	mov    %esp,%ebp
+ b03:	57                   	push   %edi
+ b04:	56                   	push   %esi
+ b05:	53                   	push   %ebx
+ b06:	81 ec 00 10 00 00    	sub    $0x1000,%esp
+ b0c:	83 0c 24 00          	orl    $0x0,(%esp)
+ b10:	81 ec 00 10 00 00    	sub    $0x1000,%esp
+ b16:	83 0c 24 00          	orl    $0x0,(%esp)
+ b1a:	81 ec 64 08 00 00    	sub    $0x864,%esp
+    int fp = open(file_path, O_RDONLY);
+ b20:	6a 00                	push   $0x0
+ b22:	ff 75 08             	push   0x8(%ebp)
+ b25:	e8 79 f8 ff ff       	call   3a3 <open>
+    if (fp < 0 ) {
+ b2a:	83 c4 10             	add    $0x10,%esp
+    int fp = open(file_path, O_RDONLY);
+ b2d:	89 85 a4 d7 ff ff    	mov    %eax,-0x285c(%ebp)
+    if (fp < 0 ) {
+ b33:	85 c0                	test   %eax,%eax
+ b35:	0f 88 99 01 00 00    	js     cd4 <permute_line+0x1d4>
+ b3b:	8d b5 10 d8 ff ff    	lea    -0x27f0(%ebp),%esi
+        printf(1, "Failed when trying to open file in the permutation routine. Aborting\n");
+        return -1;
+    }
+
+    char lines[NUM_STRINGS][STRING_SIZE];
+    int line_idx=0;
+ b41:	31 db                	xor    %ebx,%ebx
+ b43:	89 b5 a0 d7 ff ff    	mov    %esi,-0x2860(%ebp)
+    if (fp < 0 ) {
+ b49:	89 f7                	mov    %esi,%edi
+ b4b:	89 de                	mov    %ebx,%esi
+ b4d:	89 c3                	mov    %eax,%ebx
+ b4f:	eb 12                	jmp    b63 <permute_line+0x63>
+ b51:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+
+    // --- Read all lines from the file ---
+    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
+ b58:	83 c7 66             	add    $0x66,%edi
+ b5b:	83 fe 64             	cmp    $0x64,%esi
+ b5e:	74 16                	je     b76 <permute_line+0x76>
+        line_idx++;
+ b60:	83 c6 01             	add    $0x1,%esi
+    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
+ b63:	83 ec 04             	sub    $0x4,%esp
+ b66:	6a 66                	push   $0x66
+ b68:	57                   	push   %edi
+ b69:	53                   	push   %ebx
+ b6a:	e8 0c f8 ff ff       	call   37b <read>
+ b6f:	83 c4 10             	add    $0x10,%esp
+ b72:	85 c0                	test   %eax,%eax
+ b74:	7f e2                	jg     b58 <permute_line+0x58>
+    }
+
+    // --- Getting random indices representing random strings ---
+    int line1 = random() % NUM_STRINGS;
+ b76:	89 f3                	mov    %esi,%ebx
+ b78:	8b b5 a0 d7 ff ff    	mov    -0x2860(%ebp),%esi
+ b7e:	e8 3d ff ff ff       	call   ac0 <random>
+ b83:	89 c1                	mov    %eax,%ecx
+ b85:	b8 1f 85 eb 51       	mov    $0x51eb851f,%eax
+ b8a:	f7 e9                	imul   %ecx
+ b8c:	89 c8                	mov    %ecx,%eax
+ b8e:	c1 f8 1f             	sar    $0x1f,%eax
+ b91:	c1 fa 05             	sar    $0x5,%edx
+ b94:	29 c2                	sub    %eax,%edx
+ b96:	6b c2 64             	imul   $0x64,%edx,%eax
+ b99:	29 c1                	sub    %eax,%ecx
+ b9b:	89 cf                	mov    %ecx,%edi
+    int line2 = random() % NUM_STRINGS;
+ b9d:	e8 1e ff ff ff       	call   ac0 <random>
+ ba2:	89 c1                	mov    %eax,%ecx
+ ba4:	b8 1f 85 eb 51       	mov    $0x51eb851f,%eax
+ ba9:	f7 e9                	imul   %ecx
+ bab:	89 c8                	mov    %ecx,%eax
+ bad:	c1 f8 1f             	sar    $0x1f,%eax
+ bb0:	c1 fa 05             	sar    $0x5,%edx
+ bb3:	29 c2                	sub    %eax,%edx
+ bb5:	6b c2 64             	imul   $0x64,%edx,%eax
+ bb8:	29 c1                	sub    %eax,%ecx
+
+    // --- Swap lines in memory ---
+    if (line1 != line2) {
+ bba:	39 cf                	cmp    %ecx,%edi
+ bbc:	89 8d a0 d7 ff ff    	mov    %ecx,-0x2860(%ebp)
+ bc2:	74 5f                	je     c23 <permute_line+0x123>
+        char temp[STRING_SIZE];
+        strcpy(temp, lines[line1]);
+ bc4:	6b c7 66             	imul   $0x66,%edi,%eax
+ bc7:	8d 8d 10 d8 ff ff    	lea    -0x27f0(%ebp),%ecx
+ bcd:	83 ec 08             	sub    $0x8,%esp
+ bd0:	01 c1                	add    %eax,%ecx
+ bd2:	8d 85 a8 d7 ff ff    	lea    -0x2858(%ebp),%eax
+ bd8:	51                   	push   %ecx
+ bd9:	50                   	push   %eax
+ bda:	89 8d 9c d7 ff ff    	mov    %ecx,-0x2864(%ebp)
+ be0:	e8 2b f5 ff ff       	call   110 <strcpy>
+        strcpy(lines[line1], lines[line2]);
+ be5:	8b 95 a0 d7 ff ff    	mov    -0x2860(%ebp),%edx
+ beb:	8d 85 10 d8 ff ff    	lea    -0x27f0(%ebp),%eax
+ bf1:	6b d2 66             	imul   $0x66,%edx,%edx
+ bf4:	01 c2                	add    %eax,%edx
+ bf6:	58                   	pop    %eax
+ bf7:	59                   	pop    %ecx
+ bf8:	8b 8d 9c d7 ff ff    	mov    -0x2864(%ebp),%ecx
+ bfe:	52                   	push   %edx
+ bff:	89 95 a0 d7 ff ff    	mov    %edx,-0x2860(%ebp)
+ c05:	51                   	push   %ecx
+ c06:	e8 05 f5 ff ff       	call   110 <strcpy>
+        strcpy(lines[line2], temp);
+ c0b:	8b 95 a0 d7 ff ff    	mov    -0x2860(%ebp),%edx
+ c11:	5f                   	pop    %edi
+ c12:	58                   	pop    %eax
+ c13:	8d 85 a8 d7 ff ff    	lea    -0x2858(%ebp),%eax
+ c19:	50                   	push   %eax
+ c1a:	52                   	push   %edx
+ c1b:	e8 f0 f4 ff ff       	call   110 <strcpy>
+ c20:	83 c4 10             	add    $0x10,%esp
+    }
+    
+    // --- Close and reopen to reset the file pointer ---
+    close(fp);  
+ c23:	83 ec 0c             	sub    $0xc,%esp
+ c26:	ff b5 a4 d7 ff ff    	push   -0x285c(%ebp)
+ c2c:	e8 5a f7 ff ff       	call   38b <close>
+    fp = open(file_path, O_RDWR);
+ c31:	58                   	pop    %eax
+ c32:	5a                   	pop    %edx
+ c33:	6a 02                	push   $0x2
+ c35:	ff 75 08             	push   0x8(%ebp)
+ c38:	e8 66 f7 ff ff       	call   3a3 <open>
+
+
+    // --- Fill buffer with zeroes to clear the file ---
+    struct stat st;
+    fstat(fp, &st);
+ c3d:	59                   	pop    %ecx
+    fp = open(file_path, O_RDWR);
+ c3e:	89 c7                	mov    %eax,%edi
+    fstat(fp, &st);
+ c40:	58                   	pop    %eax
+ c41:	8d 85 a8 d7 ff ff    	lea    -0x2858(%ebp),%eax
+ c47:	50                   	push   %eax
+ c48:	57                   	push   %edi
+ c49:	e8 6d f7 ff ff       	call   3bb <fstat>
+    char *buffer = malloc(0);
+ c4e:	c7 04 24 00 00 00 00 	movl   $0x0,(%esp)
+ c55:	e8 96 fa ff ff       	call   6f0 <malloc>
+    memset(buffer, 0, 0);  
+ c5a:	83 c4 0c             	add    $0xc,%esp
+ c5d:	6a 00                	push   $0x0
+ c5f:	6a 00                	push   $0x0
+ c61:	50                   	push   %eax
+ c62:	89 85 a4 d7 ff ff    	mov    %eax,-0x285c(%ebp)
+ c68:	e8 63 f5 ff ff       	call   1d0 <memset>
+    write(fp, buffer, 0);
+ c6d:	8b 95 a4 d7 ff ff    	mov    -0x285c(%ebp),%edx
+ c73:	83 c4 0c             	add    $0xc,%esp
+ c76:	6a 00                	push   $0x0
+ c78:	52                   	push   %edx
+ c79:	57                   	push   %edi
+ c7a:	e8 04 f7 ff ff       	call   383 <write>
+    free(buffer);
+ c7f:	8b 95 a4 d7 ff ff    	mov    -0x285c(%ebp),%edx
+ c85:	89 14 24             	mov    %edx,(%esp)
+ c88:	e8 d3 f9 ff ff       	call   660 <free>
+
+
+    // --- Write the modified content back to the file ---
+    if (fp < 0) {
+ c8d:	83 c4 10             	add    $0x10,%esp
+ c90:	85 ff                	test   %edi,%edi
+ c92:	78 59                	js     ced <permute_line+0x1ed>
+        printf(1, "Failed to open file for writing in permutation routine.\n");
+        return -1;
+    }
+
+    for (int i = 0; i < line_idx; i++) {
+ c94:	85 db                	test   %ebx,%ebx
+ c96:	74 26                	je     cbe <permute_line+0x1be>
+ c98:	6b db 66             	imul   $0x66,%ebx,%ebx
+ c9b:	8d 85 10 d8 ff ff    	lea    -0x27f0(%ebp),%eax
+ ca1:	01 c3                	add    %eax,%ebx
+ ca3:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+ ca7:	90                   	nop
+        write(fp, lines[i], STRING_SIZE);
+ ca8:	83 ec 04             	sub    $0x4,%esp
+ cab:	6a 66                	push   $0x66
+ cad:	56                   	push   %esi
+    for (int i = 0; i < line_idx; i++) {
+ cae:	83 c6 66             	add    $0x66,%esi
+        write(fp, lines[i], STRING_SIZE);
+ cb1:	57                   	push   %edi
+ cb2:	e8 cc f6 ff ff       	call   383 <write>
+    for (int i = 0; i < line_idx; i++) {
+ cb7:	83 c4 10             	add    $0x10,%esp
+ cba:	39 de                	cmp    %ebx,%esi
+ cbc:	75 ea                	jne    ca8 <permute_line+0x1a8>
+    }
+
+    close(fp);
+ cbe:	83 ec 0c             	sub    $0xc,%esp
+ cc1:	57                   	push   %edi
+ cc2:	e8 c4 f6 ff ff       	call   38b <close>
+    return 0;
+ cc7:	83 c4 10             	add    $0x10,%esp
+ cca:	31 c0                	xor    %eax,%eax
+ ccc:	8d 65 f4             	lea    -0xc(%ebp),%esp
+ ccf:	5b                   	pop    %ebx
+ cd0:	5e                   	pop    %esi
+ cd1:	5f                   	pop    %edi
+ cd2:	5d                   	pop    %ebp
+ cd3:	c3                   	ret    
+        printf(1, "Failed when trying to open file in the permutation routine. Aborting\n");
+ cd4:	83 ec 08             	sub    $0x8,%esp
+ cd7:	68 a4 10 00 00       	push   $0x10a4
+ cdc:	6a 01                	push   $0x1
+ cde:	e8 dd f7 ff ff       	call   4c0 <printf>
+        return -1;
+ ce3:	83 c4 10             	add    $0x10,%esp
+ ce6:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+ ceb:	eb df                	jmp    ccc <permute_line+0x1cc>
+        printf(1, "Failed to open file for writing in permutation routine.\n");
+ ced:	83 ec 08             	sub    $0x8,%esp
+ cf0:	68 ec 10 00 00       	push   $0x10ec
+ cf5:	6a 01                	push   $0x1
+ cf7:	e8 c4 f7 ff ff       	call   4c0 <printf>
+        return -1;
+ cfc:	83 c4 10             	add    $0x10,%esp
+ cff:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+ d04:	eb c6                	jmp    ccc <permute_line+0x1cc>
+ d06:	66 90                	xchg   %ax,%ax
+ d08:	66 90                	xchg   %ax,%ax
+ d0a:	66 90                	xchg   %ax,%ax
+ d0c:	66 90                	xchg   %ax,%ax
+ d0e:	66 90                	xchg   %ax,%ax
+
+00000d10 <add_line>:
+#include "types.h"
+#include "user.h"
+#include "fcntl.h"
+#include "stat.h"
+
+int add_line(char *file_path, char *new_line) {
+ d10:	55                   	push   %ebp
+ d11:	89 e5                	mov    %esp,%ebp
+ d13:	57                   	push   %edi
+ d14:	56                   	push   %esi
+ d15:	53                   	push   %ebx
+ d16:	81 ec 00 10 00 00    	sub    $0x1000,%esp
+ d1c:	83 0c 24 00          	orl    $0x0,(%esp)
+ d20:	81 ec 00 10 00 00    	sub    $0x1000,%esp
+ d26:	83 0c 24 00          	orl    $0x0,(%esp)
+ d2a:	81 ec 04 08 00 00    	sub    $0x804,%esp
+    int fp = open(file_path, O_RDONLY);  
+ d30:	6a 00                	push   $0x0
+ d32:	ff 75 08             	push   0x8(%ebp)
+ d35:	e8 69 f6 ff ff       	call   3a3 <open>
+    if (fp < 0) {
+ d3a:	83 c4 10             	add    $0x10,%esp
+ d3d:	85 c0                	test   %eax,%eax
+ d3f:	0f 88 b1 00 00 00    	js     df6 <add_line+0xe6>
+ d45:	89 c3                	mov    %eax,%ebx
+ d47:	8d 85 10 d8 ff ff    	lea    -0x27f0(%ebp),%eax
+        printf(1, "Failed to open file for reading.\n");
+        return -1;
+    }
+
+    char lines[NUM_STRINGS][STRING_SIZE];
+    int line_idx=0;
+ d4d:	31 f6                	xor    %esi,%esi
+ d4f:	89 85 00 d8 ff ff    	mov    %eax,-0x2800(%ebp)
+    if (fp < 0) {
+ d55:	89 c7                	mov    %eax,%edi
+ d57:	eb 12                	jmp    d6b <add_line+0x5b>
+ d59:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+
+    // --- Read all lines from the file ---
+    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
+ d60:	83 c7 66             	add    $0x66,%edi
+ d63:	83 fe 64             	cmp    $0x64,%esi
+ d66:	74 1c                	je     d84 <add_line+0x74>
+        line_idx++;
+ d68:	83 c6 01             	add    $0x1,%esi
+    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
+ d6b:	83 ec 04             	sub    $0x4,%esp
+ d6e:	89 bd 04 d8 ff ff    	mov    %edi,-0x27fc(%ebp)
+ d74:	6a 66                	push   $0x66
+ d76:	57                   	push   %edi
+ d77:	53                   	push   %ebx
+ d78:	e8 fe f5 ff ff       	call   37b <read>
+ d7d:	83 c4 10             	add    $0x10,%esp
+ d80:	85 c0                	test   %eax,%eax
+ d82:	7f dc                	jg     d60 <add_line+0x50>
+    }
+    close(fp); 
+ d84:	83 ec 0c             	sub    $0xc,%esp
+ d87:	53                   	push   %ebx
+ d88:	e8 fe f5 ff ff       	call   38b <close>
+
+    // --- Add the new line in memory ---
+    strcpy(lines[line_idx], new_line);
+ d8d:	58                   	pop    %eax
+ d8e:	5a                   	pop    %edx
+ d8f:	ff 75 0c             	push   0xc(%ebp)
+ d92:	ff b5 04 d8 ff ff    	push   -0x27fc(%ebp)
+ d98:	e8 73 f3 ff ff       	call   110 <strcpy>
+    line_idx++;
+
+    // --- Overwrite file with new lines ---
+    fp = open(file_path, O_WRONLY);  
+ d9d:	59                   	pop    %ecx
+ d9e:	5b                   	pop    %ebx
+ d9f:	6a 01                	push   $0x1
+ da1:	ff 75 08             	push   0x8(%ebp)
+ da4:	e8 fa f5 ff ff       	call   3a3 <open>
+    if (fp < 0) {
+ da9:	83 c4 10             	add    $0x10,%esp
+    fp = open(file_path, O_WRONLY);  
+ dac:	89 c3                	mov    %eax,%ebx
+    if (fp < 0) {
+ dae:	85 c0                	test   %eax,%eax
+ db0:	78 5d                	js     e0f <add_line+0xff>
+ db2:	6b ce 66             	imul   $0x66,%esi,%ecx
+ db5:	8b 85 00 d8 ff ff    	mov    -0x2800(%ebp),%eax
+ dbb:	8d 78 66             	lea    0x66(%eax),%edi
+ dbe:	8d 34 0f             	lea    (%edi,%ecx,1),%esi
+ dc1:	eb 08                	jmp    dcb <add_line+0xbb>
+ dc3:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+ dc7:	90                   	nop
+ dc8:	83 c7 66             	add    $0x66,%edi
+        printf(1, "Failed to open file for writing.\n");
+        return -1;
+    }
+
+    for (int i = 0; i < line_idx; i++) {
+        write(fp, lines[i], STRING_SIZE);
+ dcb:	83 ec 04             	sub    $0x4,%esp
+ dce:	6a 66                	push   $0x66
+ dd0:	50                   	push   %eax
+ dd1:	53                   	push   %ebx
+ dd2:	e8 ac f5 ff ff       	call   383 <write>
+    for (int i = 0; i < line_idx; i++) {
+ dd7:	89 f8                	mov    %edi,%eax
+ dd9:	83 c4 10             	add    $0x10,%esp
+ ddc:	39 f7                	cmp    %esi,%edi
+ dde:	75 e8                	jne    dc8 <add_line+0xb8>
+    }
+
+    close(fp);
+ de0:	83 ec 0c             	sub    $0xc,%esp
+ de3:	53                   	push   %ebx
+ de4:	e8 a2 f5 ff ff       	call   38b <close>
+    return 0;
+ de9:	83 c4 10             	add    $0x10,%esp
+ dec:	31 c0                	xor    %eax,%eax
+}
+ dee:	8d 65 f4             	lea    -0xc(%ebp),%esp
+ df1:	5b                   	pop    %ebx
+ df2:	5e                   	pop    %esi
+ df3:	5f                   	pop    %edi
+ df4:	5d                   	pop    %ebp
+ df5:	c3                   	ret    
+        printf(1, "Failed to open file for reading.\n");
+ df6:	83 ec 08             	sub    $0x8,%esp
+ df9:	68 28 11 00 00       	push   $0x1128
+ dfe:	6a 01                	push   $0x1
+ e00:	e8 bb f6 ff ff       	call   4c0 <printf>
+        return -1;
+ e05:	83 c4 10             	add    $0x10,%esp
+ e08:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+ e0d:	eb df                	jmp    dee <add_line+0xde>
+        printf(1, "Failed to open file for writing.\n");
+ e0f:	83 ec 08             	sub    $0x8,%esp
+ e12:	68 4c 11 00 00       	push   $0x114c
+ e17:	6a 01                	push   $0x1
+ e19:	e8 a2 f6 ff ff       	call   4c0 <printf>
+        return -1;
+ e1e:	83 c4 10             	add    $0x10,%esp
+ e21:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+ e26:	eb c6                	jmp    dee <add_line+0xde>
+ e28:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+ e2f:	90                   	nop
+
+00000e30 <generate_random_string>:
+
+
+void generate_random_string(char s[STRING_SIZE], const char char_set[], const size_t size_char_set) {
+ e30:	55                   	push   %ebp
+ e31:	89 e5                	mov    %esp,%ebp
+ e33:	57                   	push   %edi
+ e34:	56                   	push   %esi
+ e35:	53                   	push   %ebx
+ e36:	83 ec 0c             	sub    $0xc,%esp
+ e39:	8b 5d 08             	mov    0x8(%ebp),%ebx
+ e3c:	8d 73 64             	lea    0x64(%ebx),%esi
+ e3f:	89 f7                	mov    %esi,%edi
+ e41:	8b 75 0c             	mov    0xc(%ebp),%esi
+ e44:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+    for (int i = 0; i < (STRING_SIZE - 2); i++) {
+        int idx_new_char = random() % size_char_set;
+ e48:	e8 73 fc ff ff       	call   ac0 <random>
+ e4d:	31 d2                	xor    %edx,%edx
+    for (int i = 0; i < (STRING_SIZE - 2); i++) {
+ e4f:	83 c3 01             	add    $0x1,%ebx
+        int idx_new_char = random() % size_char_set;
+ e52:	f7 75 10             	divl   0x10(%ebp)
+        s[i] = char_set[idx_new_char];
+ e55:	0f b6 04 16          	movzbl (%esi,%edx,1),%eax
+ e59:	88 43 ff             	mov    %al,-0x1(%ebx)
+    for (int i = 0; i < (STRING_SIZE - 2); i++) {
+ e5c:	39 fb                	cmp    %edi,%ebx
+ e5e:	75 e8                	jne    e48 <generate_random_string+0x18>
+    }
+    s[STRING_SIZE - 2] = '\n';
+ e60:	8b 45 08             	mov    0x8(%ebp),%eax
+ e63:	ba 0a 00 00 00       	mov    $0xa,%edx
+ e68:	66 89 50 64          	mov    %dx,0x64(%eax)
+    s[STRING_SIZE - 1] = '\0';
+}
+ e6c:	83 c4 0c             	add    $0xc,%esp
+ e6f:	5b                   	pop    %ebx
+ e70:	5e                   	pop    %esi
+ e71:	5f                   	pop    %edi
+ e72:	5d                   	pop    %ebp
+ e73:	c3                   	ret    
+ e74:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+ e7b:	8d 74 26 00          	lea    0x0(%esi,%eiz,1),%esi
+ e7f:	90                   	nop
+
+00000e80 <write_random_string>:
+
+int write_random_string(char file_path[]) {
+ e80:	55                   	push   %ebp
+    // --- Defining set of possible characters for the string --- 
+    const char char_set[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?'!@#$&*()-+{}[].;,<>:|";
+ e81:	b9 15 00 00 00       	mov    $0x15,%ecx
+int write_random_string(char file_path[]) {
+ e86:	89 e5                	mov    %esp,%ebp
+ e88:	57                   	push   %edi
+ e89:	56                   	push   %esi
+    const char char_set[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?'!@#$&*()-+{}[].;,<>:|";
+ e8a:	8d bd 2c ff ff ff    	lea    -0xd4(%ebp),%edi
+ e90:	be 70 11 00 00       	mov    $0x1170,%esi
+int write_random_string(char file_path[]) {
+ e95:	53                   	push   %ebx
+        int idx_new_char = random() % size_char_set;
+ e96:	bb c1 c0 c0 c0       	mov    $0xc0c0c0c1,%ebx
+int write_random_string(char file_path[]) {
+ e9b:	81 ec cc 00 00 00    	sub    $0xcc,%esp
+    const char char_set[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?'!@#$&*()-+{}[].;,<>:|";
+ ea1:	f3 a5                	rep movsl %ds:(%esi),%es:(%edi)
+ ea3:	0f b7 06             	movzwl (%esi),%eax
+ ea6:	8d 75 e6             	lea    -0x1a(%ebp),%esi
+ ea9:	66 89 07             	mov    %ax,(%edi)
+    for (int i = 0; i < (STRING_SIZE - 2); i++) {
+ eac:	8d 7d 82             	lea    -0x7e(%ebp),%edi
+ eaf:	90                   	nop
+        int idx_new_char = random() % size_char_set;
+ eb0:	e8 0b fc ff ff       	call   ac0 <random>
+    for (int i = 0; i < (STRING_SIZE - 2); i++) {
+ eb5:	83 c7 01             	add    $0x1,%edi
+        int idx_new_char = random() % size_char_set;
+ eb8:	89 c1                	mov    %eax,%ecx
+ eba:	f7 e3                	mul    %ebx
+ ebc:	c1 ea 06             	shr    $0x6,%edx
+ ebf:	6b d2 55             	imul   $0x55,%edx,%edx
+ ec2:	29 d1                	sub    %edx,%ecx
+        s[i] = char_set[idx_new_char];
+ ec4:	0f b6 84 0d 2c ff ff 	movzbl -0xd4(%ebp,%ecx,1),%eax
+ ecb:	ff 
+ ecc:	88 47 ff             	mov    %al,-0x1(%edi)
+    for (int i = 0; i < (STRING_SIZE - 2); i++) {
+ ecf:	39 f7                	cmp    %esi,%edi
+ ed1:	75 dd                	jne    eb0 <write_random_string+0x30>
+    s[STRING_SIZE - 2] = '\n';
+ ed3:	b8 0a 00 00 00       	mov    $0xa,%eax
+    const size_t size_char_set = sizeof(char_set) - 1;
+    char s[STRING_SIZE];
+   
+    generate_random_string(s, char_set, size_char_set);
+    add_line(file_path, s);
+ ed8:	83 ec 08             	sub    $0x8,%esp
+    s[STRING_SIZE - 2] = '\n';
+ edb:	66 89 45 e6          	mov    %ax,-0x1a(%ebp)
+    add_line(file_path, s);
+ edf:	8d 45 82             	lea    -0x7e(%ebp),%eax
+ ee2:	50                   	push   %eax
+ ee3:	ff 75 08             	push   0x8(%ebp)
+ ee6:	e8 25 fe ff ff       	call   d10 <add_line>
+
+    return 0;
+}
+ eeb:	8d 65 f4             	lea    -0xc(%ebp),%esp
+ eee:	31 c0                	xor    %eax,%eax
+ ef0:	5b                   	pop    %ebx
+ ef1:	5e                   	pop    %esi
+ ef2:	5f                   	pop    %edi
+ ef3:	5d                   	pop    %ebp
+ ef4:	c3                   	ret    
+ ef5:	66 90                	xchg   %ax,%ax
+ ef7:	66 90                	xchg   %ax,%ax
+ ef9:	66 90                	xchg   %ax,%ax
+ efb:	66 90                	xchg   %ax,%ax
+ efd:	66 90                	xchg   %ax,%ax
+ eff:	90                   	nop
+
+00000f00 <io_bound>:
+#include "io-bound.h"
+#include "types.h"
+#include "user.h"
+
+
+void io_bound(char file_path[]) {
+ f00:	55                   	push   %ebp
+ f01:	89 e5                	mov    %esp,%ebp
+ f03:	56                   	push   %esi
+ f04:	8b 75 08             	mov    0x8(%ebp),%esi
+ f07:	53                   	push   %ebx
+ f08:	bb 64 00 00 00       	mov    $0x64,%ebx
+ f0d:	8d 76 00             	lea    0x0(%esi),%esi
+    // --- Writing 100 random strings ---
+    for (int i = 0; i < NUM_STRINGS; i++) {
+        write_random_string(file_path);
+ f10:	83 ec 0c             	sub    $0xc,%esp
+ f13:	56                   	push   %esi
+ f14:	e8 67 ff ff ff       	call   e80 <write_random_string>
+    for (int i = 0; i < NUM_STRINGS; i++) {
+ f19:	83 c4 10             	add    $0x10,%esp
+ f1c:	83 eb 01             	sub    $0x1,%ebx
+ f1f:	75 ef                	jne    f10 <io_bound+0x10>
+ f21:	bb 32 00 00 00       	mov    $0x32,%ebx
+ f26:	8d b4 26 00 00 00 00 	lea    0x0(%esi,%eiz,1),%esi
+ f2d:	8d 76 00             	lea    0x0(%esi),%esi
+    }
+
+    // --- Executing line permutations ---
+    for (int i = 0; i < NUM_PERMUT; i++) {
+        permute_line(file_path);
+ f30:	83 ec 0c             	sub    $0xc,%esp
+ f33:	56                   	push   %esi
+ f34:	e8 c7 fb ff ff       	call   b00 <permute_line>
+    for (int i = 0; i < NUM_PERMUT; i++) {
+ f39:	83 c4 10             	add    $0x10,%esp
+ f3c:	83 eb 01             	sub    $0x1,%ebx
+ f3f:	75 ef                	jne    f30 <io_bound+0x30>
+    }
+
+    if (unlink(file_path) != 0) {
+ f41:	83 ec 0c             	sub    $0xc,%esp
+ f44:	56                   	push   %esi
+ f45:	e8 69 f4 ff ff       	call   3b3 <unlink>
+ f4a:	83 c4 10             	add    $0x10,%esp
+ f4d:	85 c0                	test   %eax,%eax
+ f4f:	75 07                	jne    f58 <io_bound+0x58>
+        printf(1,"Error when trying to delete file 'output.txt'\n");
+    }
+ f51:	8d 65 f8             	lea    -0x8(%ebp),%esp
+ f54:	5b                   	pop    %ebx
+ f55:	5e                   	pop    %esi
+ f56:	5d                   	pop    %ebp
+ f57:	c3                   	ret    
+        printf(1,"Error when trying to delete file 'output.txt'\n");
+ f58:	83 ec 08             	sub    $0x8,%esp
+ f5b:	68 c8 11 00 00       	push   $0x11c8
+ f60:	6a 01                	push   $0x1
+ f62:	e8 59 f5 ff ff       	call   4c0 <printf>
+ f67:	83 c4 10             	add    $0x10,%esp
+ f6a:	8d 65 f8             	lea    -0x8(%ebp),%esp
+ f6d:	5b                   	pop    %ebx
+ f6e:	5e                   	pop    %esi
+ f6f:	5d                   	pop    %ebp
+ f70:	c3                   	ret    
+ f71:	66 90                	xchg   %ax,%ax
+ f73:	66 90                	xchg   %ax,%ax
+ f75:	66 90                	xchg   %ax,%ax
+ f77:	66 90                	xchg   %ax,%ax
+ f79:	66 90                	xchg   %ax,%ax
+ f7b:	66 90                	xchg   %ax,%ax
+ f7d:	66 90                	xchg   %ax,%ax
+ f7f:	90                   	nop
+
+00000f80 <cpu_bound>:
+#include "user.h"
+
+// #include <stdio.h>
+// #include <unistd.h>
+
+void cpu_bound() {
+ f80:	55                   	push   %ebp
+ f81:	89 e5                	mov    %esp,%ebp
+ f83:	57                   	push   %edi
+ f84:	56                   	push   %esi
+ f85:	53                   	push   %ebx
+ f86:	8d 84 24 00 90 fd ff 	lea    -0x27000(%esp),%eax
+ f8d:	81 ec 00 10 00 00    	sub    $0x1000,%esp
+ f93:	83 0c 24 00          	orl    $0x0,(%esp)
+ f97:	39 c4                	cmp    %eax,%esp
+ f99:	75 f2                	jne    f8d <cpu_bound+0xd>
+ f9b:	81 ec 3c 04 00 00    	sub    $0x43c,%esp
+ fa1:	be e8 03 00 00       	mov    $0x3e8,%esi
+ fa6:	8d bd c4 8b fd ff    	lea    -0x2743c(%ebp),%edi
+ fac:	8d 9d e8 8e fd ff    	lea    -0x27118(%ebp),%ebx
+ fb2:	8d b6 00 00 00 00    	lea    0x0(%esi),%esi
+    for (int i = 0; i < NUM_GRAPHS; i++) {
+        int graph[MAX_VERT][MAX_VERT];
+        int num_vertices;
+        int num_edges;
+
+        gen_random_digraph(graph, &num_vertices, &num_edges);
+ fb8:	83 ec 04             	sub    $0x4,%esp
+ fbb:	8d 85 c0 8b fd ff    	lea    -0x27440(%ebp),%eax
+ fc1:	57                   	push   %edi
+ fc2:	50                   	push   %eax
+ fc3:	53                   	push   %ebx
+ fc4:	e8 e7 f9 ff ff       	call   9b0 <gen_random_digraph>
+
+        int dist[MAX_VERT];
+        dijkstra(graph, num_vertices, num_edges, 0, dist);
+ fc9:	8d 85 c8 8b fd ff    	lea    -0x27438(%ebp),%eax
+ fcf:	89 04 24             	mov    %eax,(%esp)
+ fd2:	6a 00                	push   $0x0
+ fd4:	ff b5 c4 8b fd ff    	push   -0x2743c(%ebp)
+ fda:	ff b5 c0 8b fd ff    	push   -0x27440(%ebp)
+ fe0:	53                   	push   %ebx
+ fe1:	e8 6a f8 ff ff       	call   850 <dijkstra>
+    for (int i = 0; i < NUM_GRAPHS; i++) {
+ fe6:	83 c4 20             	add    $0x20,%esp
+ fe9:	83 ee 01             	sub    $0x1,%esi
+ fec:	75 ca                	jne    fb8 <cpu_bound+0x38>
+    }
+ fee:	8d 65 f4             	lea    -0xc(%ebp),%esp
+ ff1:	5b                   	pop    %ebx
+ ff2:	5e                   	pop    %esi
+ ff3:	5f                   	pop    %edi
+ ff4:	5d                   	pop    %ebp
+ ff5:	c3                   	ret    

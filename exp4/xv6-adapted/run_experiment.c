@@ -1,8 +1,7 @@
 #include "cpu-bound.h"
 #include "io-bound.h"
-
-#include <stdio.h>
-#include <stdlib.h>
+#include "types.h"
+#include "user.h"
 
 #define NUM_ROUNDS 30
 
@@ -13,7 +12,7 @@ int main(int argc, char *argv[]) {
     // --- Executing 30 rounds of the experiment ---
     for (int i = 0; i < NUM_ROUNDS; i++) {
         // --- Defining number of executions for each round ---
-        execs_cpu = (rand() % 9) + 6; // must be in [6, 14]
+        execs_cpu = (random() % 9) + 6; // must be in [6, 14]
         execs_io = 20 - execs_cpu; // must be 20 - X
 
         for (int j = 0; j < execs_cpu; j++) {
