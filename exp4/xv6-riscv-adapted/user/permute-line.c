@@ -28,12 +28,9 @@ int permute_line(char file_path[]) {
 
     // --- Swap lines in memory ---
     if (line1 != line2) {
-        assert(lines[line1][STRING_SIZE - 1] == '\0');
-        assert(lines[line2][STRING_SIZE - 1] == '\0');
-
         char temp[STRING_SIZE];
         strcpy(temp, lines[line1]);
-        strcpy(lines[line1], lines[line2]);
+        strncpy(lines[line1], lines[line2], STRING_SIZE);
         strcpy(lines[line2], temp);
     }
     
