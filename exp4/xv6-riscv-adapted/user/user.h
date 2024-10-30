@@ -29,9 +29,6 @@ int uptime(void);
 // ulib.c
 int stat(const char*, struct stat*);
 char* strcpy(char*, const char*);
-// temp
-char* strncpy(char *, const char *, const int n);
-//temp
 void *memmove(void*, const void*, int);
 char* strchr(const char*, char c);
 int strcmp(const char*, const char*);
@@ -49,6 +46,9 @@ int permute_line(char file_path[]);
 int write_random_string(char file_path[]);
 void io_bound(char file_path[]);
 void cpu_bound();
+// temp
+char* strncpy(char *, const char *, const int n);
+//temp
 
 // umalloc.c
 void* malloc(uint);
