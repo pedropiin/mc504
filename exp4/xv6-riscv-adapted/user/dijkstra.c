@@ -25,6 +25,7 @@ int min_distance_vertex(int* dist, int* visited, int num_vertices) {
 void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist) {
     // --- Initializing distance array and visited array
     int* visited = malloc(num_vertices*sizeof(int));
+ 
     for (int i = 0; i < num_vertices; i++) {
         dist[i] = INF;
         visited[i] = 0;

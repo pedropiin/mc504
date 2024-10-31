@@ -46,7 +46,7 @@ int random();
 int permute_line(char file_path[]);
 int write_random_string(char file_path[]);
 void io_bound(char file_path[]);
-void cpu_bound(int** graph);
+void cpu_bound();
 
 // temp
 char* strncpy(char *, const char *, const int n);

@@ -28,7 +28,7 @@ void gen_random_digraph(int** graph, int *num_vertices, int *num_edges) {
 
     // --- Initializing adjacency matrix graph invalid/unacessible values ---
     for (int i = *num_vertices; i < MAX_VERT; i++) {
-        for (int j = *num_vertices; i < MAX_VERT; i++) {
+        for (int j = *num_vertices; j < MAX_VERT; j++) {
             graph[i][j] = -1;
         }
     }

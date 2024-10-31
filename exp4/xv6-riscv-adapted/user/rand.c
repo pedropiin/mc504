@@ -4,5 +4,8 @@
 int random() {
     int seed = uptime()%MOD;
     seed = ((seed * 1664525)%MOD + 1013904223)%MOD;
+    if (seed < 0) {
+        seed *= -1;
+    }
     return seed;
 }
