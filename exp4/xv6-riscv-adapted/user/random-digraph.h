@@ -16,6 +16,6 @@ The 2d array is initialized with 200x200 positions, but
 the remaining positions are all set to -1 to avoid incorrect
 memory access.
 */
-void gen_random_digraph(int graph[][MAX_VERT], int *num_vertices, int *num_edges);
+void gen_random_digraph(int** graph, int *num_vertices, int *num_edges);
 
 #endif 

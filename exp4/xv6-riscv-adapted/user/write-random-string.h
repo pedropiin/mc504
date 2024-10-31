@@ -12,7 +12,7 @@
 #define NUM_STRINGS 100
 #define NUM_PERMUT 50
 
-void generate_random_string(char s[STRING_SIZE], const char char_set[], const size_t size_char_set);
+void generate_random_string(char* s, const char char_set[], const size_t size_char_set);
 
 int write_random_string(char file_path[]);
 

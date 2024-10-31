@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 sudo docker rm xv6-risc-container
 sudo docker image rm xv6-risc
 sudo docker build -t xv6-risc .

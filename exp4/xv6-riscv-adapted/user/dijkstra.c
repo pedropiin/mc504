@@ -7,7 +7,8 @@ the minimum distance in a directed graph
 #include "../kernel/types.h"
 #include "user.h"
 
-int min_distance_vertex(int dist[MAX_VERT], int visited[MAX_VERT], int num_vertices) {
+
+int min_distance_vertex(int* dist, int* visited, int num_vertices) {
     int min_dist = INF;
     int min_idx = 0;
 
@@ -21,9 +22,9 @@ int min_distance_vertex(int dist[MAX_VERT], int visited[MAX_VERT], int num_verti
     return min_idx;
 }
 
-void dijkstra(int graph[MAX_VERT][MAX_VERT], int num_vertices, int num_edges, int src, int dist[MAX_VERT]) {
+void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist) {
     // --- Initializing distance array and visited array
-    int visited[num_vertices];
+    int* visited = malloc(num_vertices*sizeof(int));
     for (int i = 0; i < num_vertices; i++) {
         dist[i] = INF;
         visited[i] = 0;
@@ -46,4 +47,5 @@ void dijkstra(int graph[MAX_VERT][MAX_VERT], int num_vertices, int num_edges, in
             }
         }
     }
+    free(visited);
 }

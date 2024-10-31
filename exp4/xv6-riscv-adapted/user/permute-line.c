@@ -14,7 +14,11 @@ int permute_line(char file_path[]) {
         return -1;
     }
 
-    char lines[NUM_STRINGS][STRING_SIZE];
+    // char lines[NUM_STRINGS][STRING_SIZE];
+    char** lines = malloc(NUM_STRINGS * sizeof(char*));
+    for (int i = 0; i < NUM_STRINGS; i++) {
+        lines[i] = malloc(STRING_SIZE * sizeof(char));
+    }
     int line_idx=0;
 
     // --- Read all lines from the file ---
@@ -35,6 +39,7 @@ int permute_line(char file_path[]) {
     }
     
     // --- Close and reopen to reset the file pointer ---
+    
     close(fp);  
     fp = open(file_path, O_RDWR);
 
@@ -59,5 +64,9 @@ int permute_line(char file_path[]) {
     }
 
     close(fp);
+    for (int i = 0; i < NUM_STRINGS; i++) {
+        free(lines[i]);
+    }
+    free(lines);
     return 0;
 }

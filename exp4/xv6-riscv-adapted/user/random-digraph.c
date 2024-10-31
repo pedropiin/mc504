@@ -7,7 +7,7 @@
 
 // #include <stdlib.h>
 
-void gen_random_digraph(int graph[][MAX_VERT], int *num_vertices, int *num_edges) {
+void gen_random_digraph(int** graph, int *num_vertices, int *num_edges) {
     // --- Initializing graph parameters ---
     *num_vertices = random() % MAX_VERT;
     if (*num_vertices < MIN_VERT) {

@@ -40,12 +40,14 @@ void* memset(void*, int, uint);
 int atoi(const char*);
 int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
-void dijkstra(int graph[MAX_VERT][MAX_VERT], int num_vertices, int num_edges, int src, int dist[MAX_VERT]);
+// void dijkstra(int graph[MAX_VERT][MAX_VERT], int num_vertices, int num_edges, int src, int dist[MAX_VERT]);
+void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist);
 int random();
 int permute_line(char file_path[]);
 int write_random_string(char file_path[]);
 void io_bound(char file_path[]);
-void cpu_bound();
+void cpu_bound(int** graph);
+
 // temp
 char* strncpy(char *, const char *, const int n);
 //temp

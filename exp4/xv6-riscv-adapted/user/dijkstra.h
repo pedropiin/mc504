@@ -10,8 +10,8 @@ the minimum distance in a directed graph
 #define MAX_EDGE 400
 #define INF 2147483647
 
-int min_distance_vertex(int dist[MAX_VERT], int visited[MAX_VERT], int num_vertices);
+int min_distance_vertex(int* dist, int* visited, int num_vertices);
 
-void dijkstra(int graph[MAX_VERT][MAX_VERT], int num_vertices, int num_edges, int src, int dist[MAX_VERT]);
+void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist);
 
 #endif 
