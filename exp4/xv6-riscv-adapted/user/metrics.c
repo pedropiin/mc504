@@ -9,7 +9,7 @@
 int max_throughput = 0;
 int min_throughput = __INT32_MAX__;
 
-int get_normalized_throughput(int duration, int throughputs[NUM_ROUNDS], int round) {
+int get_normalized_throughput(int duration, int *throughputs, int round) {
     // Update min and max throughputs
     if (throughputs[round] > max_throughput) max_throughput = throughputs[round];
     if (throughputs[round] < min_throughput) min_throughput = throughputs[round];

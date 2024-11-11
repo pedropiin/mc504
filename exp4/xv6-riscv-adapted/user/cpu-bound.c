@@ -20,12 +20,12 @@ void cpu_bound() {
     int* dist = malloc(MAX_VERT * sizeof(int));
     
     for (int i = 0; i < NUM_GRAPHS; i++) {
-              
+        
         int num_vertices;
         int num_edges;
 
         // printf("gen_random_digraph\n");
-      
+        
         gen_random_digraph(graph, &num_vertices, &num_edges);
 
         // printf("VERTICES: %d\n", num_vertices);

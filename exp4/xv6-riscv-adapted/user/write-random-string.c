@@ -28,6 +28,7 @@ int add_line(char file_path[], char *new_line) {
         line_idx++;
         printf("line_idx: %d\n", line_idx);
     }
+    printf("left while\n");
     close(fp); 
 
     // --- Add the new line in memory ---
@@ -69,9 +70,13 @@ int write_random_string(char file_path[]) {
     const size_t size_char_set = sizeof(char_set) - 1;
     char* s = malloc(STRING_SIZE * sizeof(char));
     
-    generate_random_string(s, char_set, size_char_set);
-    add_line(file_path, s);
-    
+    int fp = open(file_path, O_WRONLY | O_CREATE);  
+    for (int i = 0; i < NUM_STRINGS; i++) {
+        generate_random_string(s, char_set, size_char_set);
+        write(fp, s, STRING_SIZE);
+    }
+    // add_line(file_path, s);
+    close(fp);
     free(s);
 
     return 0;

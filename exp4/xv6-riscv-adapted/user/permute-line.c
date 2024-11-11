@@ -13,11 +13,11 @@ int permute_line(char file_path[]) {
         return -1;
     }
 
-
     char** lines = malloc(NUM_STRINGS * sizeof(char*));
     for (int i = 0; i < NUM_STRINGS; i++) {
         lines[i] = malloc(STRING_SIZE * sizeof(char));
     }
+    printf("allocated memory for the lines array\n");
     int line_idx=0;
 
     // --- Read all lines from the file ---
@@ -25,6 +25,7 @@ int permute_line(char file_path[]) {
         line_idx++;
     }
     close(fp);  
+    printf("read all lines from the file\n");
     
     // --- Getting random indices representing random strings ---
     int line1 = random() % NUM_STRINGS;
@@ -37,10 +38,11 @@ int permute_line(char file_path[]) {
         strncpy(lines[line1], lines[line2], STRING_SIZE);
         strcpy(lines[line2], temp);
     }
-    
+    printf("swapped lines in memory\n");
     // --- Reopen the file pointer ---
     fp = open(file_path, O_RDWR);
 
+    printf("reopened file\n");
     // --- Fill buffer with zeroes to clear the file ---
     struct stat st;
     fstat(fp, &st);
@@ -48,6 +50,7 @@ int permute_line(char file_path[]) {
     memset(buffer, 0, 0);  
     write(fp, buffer, 0);
     free(buffer);
+    printf("whatever this is\n");
 
     // --- Write the modified content back to the file ---
     if (fp < 0) {
@@ -55,9 +58,12 @@ int permute_line(char file_path[]) {
         return -1;
     }
 
+    printf("successful when opening file before effectively permuting lines\n");
     for (int i = 0; i < line_idx; i++) {
         write(fp, lines[i], STRING_SIZE);
     }
+
+    printf("wrote lines\n");
 
     close(fp);
 

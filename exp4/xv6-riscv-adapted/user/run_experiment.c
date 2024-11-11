@@ -7,12 +7,12 @@
 #define EXIT_SUCCESS 0
 
 // --- Variables used for throughput calculation ---
-int throughputs[NUM_ROUNDS];
 
 
 int main(int argc, char *argv[]) {
     int execs_cpu;
     int execs_io;
+    int * throughputs = malloc(NUM_ROUNDS * sizeof(int));
 
     // printf("USERTRAP");
     // char* file_path = malloc(20*sizeof(char));
@@ -23,15 +23,15 @@ int main(int argc, char *argv[]) {
     char file_path[] = "output.txt";
 
     // --- Executing 30 rounds of the experiment ---
-  
+
     for (int i = 0; i < NUM_ROUNDS; i++) {
         printf("ROUND: %d\n", i);
         // DO NOT ERASE THE COMENTS BELOW, i commented so i could use smaller numbers and get faster executions
         // also changed num_rounds for 3 instead of 30 
-        // execs_cpu = (random() % 9) + 6;
-        // execs_io = 20 - execs_cpu;
-        execs_cpu = (random() % 3);
-        execs_io = 5 - execs_cpu;
+        execs_cpu = (random() % 9) + 6;
+        execs_io = 20 - execs_cpu;
+        // execs_cpu = (random() % 3) + 1;
+        // execs_io = 5 - execs_cpu;
         int total_processes = execs_cpu + execs_io;
 
         int start_time = uptime(); // Record start time of the round

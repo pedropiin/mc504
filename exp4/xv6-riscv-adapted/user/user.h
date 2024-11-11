@@ -47,7 +47,7 @@ int permute_line(char file_path[]);
 int write_random_string(char file_path[]);
 void io_bound(char file_path[]);
 void cpu_bound();
-int get_normalized_throughput(int duration, int throughputs[NUM_ROUNDS], int round);
+int get_normalized_throughput(int duration, int *throughputs, int round);
 
 
 // temp
