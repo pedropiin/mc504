@@ -9,52 +9,6 @@
 #include "../kernel/stat.h"
 #include "user.h"
 
-int add_line(char file_path[], char *new_line) {
-    int fp = open(file_path, O_RDONLY | O_CREATE);  
-    if (fp < 0) {
-        printf("Failed to open file for reading.\n");
-        return -1;
-    }
-
-    // char lines[NUM_STRINGS][STRING_SIZE];
-    char** lines = malloc(NUM_STRINGS * sizeof(char*));
-    for (int i = 0; i < NUM_STRINGS; i++) {
-        lines[i] = malloc(STRING_SIZE * sizeof(char));
-    }
-    
-    int line_idx = 0;
-    // --- Read all lines from the file ---
-    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
-        line_idx++;
-        printf("line_idx: %d\n", line_idx);
-    }
-    printf("left while\n");
-    close(fp); 
-
-    // --- Add the new line in memory ---
-    strcpy(lines[line_idx], new_line);
-    line_idx++;
-
-    // --- Overwrite file with new lines ---
-    fp = open(file_path, O_WRONLY);  
-    if (fp < 0) {
-        printf("Failed to open file for writing.\n");
-        return -1;
-    }
-
-    for (int i = 0; i < line_idx; i++) {
-        write(fp, lines[i], STRING_SIZE);
-    }
-
-    close(fp);
-    for (int i = 0; i < NUM_STRINGS; i++) {
-        free(lines[i]);
-    }
-    free(lines);
-    return 0;
-}
-
-
 void generate_random_string(char* s, const char char_set[], const size_t size_char_set) {
     for (int i = 0; i < (STRING_SIZE - 2); i++) {
         int idx_new_char = random() % size_char_set;
@@ -70,12 +24,13 @@ int write_random_string(char file_path[]) {
     const size_t size_char_set = sizeof(char_set) - 1;
     char* s = malloc(STRING_SIZE * sizeof(char));
     
+    // --- Generating and writing 100 random strings ---
     int fp = open(file_path, O_WRONLY | O_CREATE);  
     for (int i = 0; i < NUM_STRINGS; i++) {
         generate_random_string(s, char_set, size_char_set);
         write(fp, s, STRING_SIZE);
     }
-    // add_line(file_path, s);
+
     close(fp);
     free(s);
 
