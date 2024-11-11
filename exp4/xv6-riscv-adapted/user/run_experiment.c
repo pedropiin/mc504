@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
         printf("VAZAO: %f", norm_throughput);
 
     } 
-    // free(file_path);
+    free(throughputs);
 
     return 0;
 }

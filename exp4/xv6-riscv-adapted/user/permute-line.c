@@ -21,10 +21,11 @@ int permute_line(char file_path[]) {
     int line_idx=0;
 
     // --- Read all lines from the file ---
-    while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
+    while (read(fp, lines[line_idx], STRING_SIZE-1) > 0 && line_idx < NUM_STRINGS) {
         line_idx++;
     }
-
+    close(fp);  
+    
     // --- Getting random indices representing random strings ---
     int line1 = random() % NUM_STRINGS;
     int line2 = random() % NUM_STRINGS;
@@ -37,11 +38,8 @@ int permute_line(char file_path[]) {
         strcpy(lines[line2], temp);
     }
     
-    // --- Close and reopen to reset the file pointer ---
-    
-    close(fp);  
+    // --- Reopen the file pointer ---
     fp = open(file_path, O_RDWR);
-
 
     // --- Fill buffer with zeroes to clear the file ---
     struct stat st;
@@ -50,7 +48,6 @@ int permute_line(char file_path[]) {
     memset(buffer, 0, 0);  
     write(fp, buffer, 0);
     free(buffer);
-
 
     // --- Write the modified content back to the file ---
     if (fp < 0) {
@@ -63,9 +60,11 @@ int permute_line(char file_path[]) {
     }
 
     close(fp);
+
     for (int i = 0; i < NUM_STRINGS; i++) {
         free(lines[i]);
     }
+
     free(lines);
     return 0;
 }

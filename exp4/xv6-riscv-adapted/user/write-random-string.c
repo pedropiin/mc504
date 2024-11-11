@@ -22,10 +22,11 @@ int add_line(char file_path[], char *new_line) {
         lines[i] = malloc(STRING_SIZE * sizeof(char));
     }
     
-    int line_idx=0;
+    int line_idx = 0;
     // --- Read all lines from the file ---
     while (read(fp, lines[line_idx], STRING_SIZE) > 0 && line_idx < NUM_STRINGS) {
         line_idx++;
+        printf("line_idx: %d\n", line_idx);
     }
     close(fp); 
 
