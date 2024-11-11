@@ -9,11 +9,6 @@ minimum path problems in random graphs
 #include "../kernel/types.h"
 #include "user.h"
 
-// #include <stdio.h>
-// #include <unistd.h>
-
-
-
 void cpu_bound() {
     // --- Executing the 1000 rounds of generating a random graph ---
     // --- and calculating the minimal distance between the edges ---

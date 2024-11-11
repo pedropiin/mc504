@@ -1,10 +1,14 @@
 #include "cpu-bound.h"
 #include "io-bound.h"
+#include "metrics.h"
 #include "../kernel/types.h"
 #include "user.h"
 
-#define NUM_ROUNDS 30
 #define EXIT_SUCCESS 0
+
+// --- Variables used for throughput calculation ---
+int throughputs[NUM_ROUNDS];
+
 
 int main(int argc, char *argv[]) {
     int execs_cpu;
@@ -21,34 +25,52 @@ int main(int argc, char *argv[]) {
     // --- Executing 30 rounds of the experiment ---
   
     for (int i = 0; i < NUM_ROUNDS; i++) {
-        execs_cpu = (random() % 9) + 6;
-        printf("execs_cpu: %d\n", execs_cpu);
-        execs_io = 20 - execs_cpu;
+        printf("ROUND: %d\n", i);
+        // DO NOT ERASE THE COMENTS BELOW, i commented so i could use smaller numbers and get faster executions
+        // also changed num_rounds for 3 instead of 30 
+        // execs_cpu = (random() % 9) + 6;
+        // execs_io = 20 - execs_cpu;
+        execs_cpu = (random() % 3);
+        execs_io = 5 - execs_cpu;
+        int total_processes = execs_cpu + execs_io;
 
-       
-        for (int j = 0; j < execs_cpu; j++) {
-            int p = fork();
-            int status;
-            if (p == 0) {
-                cpu_bound();
-                exit(EXIT_SUCCESS);
+        int start_time = uptime(); // Record start time of the round
+
+        while (execs_cpu > 0 || execs_io > 0) {
+            if (execs_cpu > 0) {
+                int p = fork();
+                int status;
+                if (p == 0) {
+                    printf("starting cpu\n");
+                    cpu_bound();
+                    exit(EXIT_SUCCESS);
+                }
+                wait(&status);
+                execs_cpu--;
+                printf("finished for cpu\n");
             }
-            wait(&status);
-            printf("CPU BOUND FINISHED\n");
-        }
-       
-        printf("execs_io: %d\n", execs_cpu);
-        for (int j = 0; j < execs_io; j++) {
-            int p = fork();
-            int status;
-            printf("p: %d\n", p);
-            if (p == 0) {
-                io_bound(file_path);
-                exit(EXIT_SUCCESS);
+            if (execs_io > 0) {
+                int p = fork();
+                int status;
+                if (p == 0) {
+                    printf("starting io\n");
+                    io_bound(file_path);
+                    exit(EXIT_SUCCESS);
+                }
+                wait(&status);
+                execs_io--;
+                printf("finished for io\n");
             }
-            wait(&status);
-            printf("IO BOUND FINISHED\n");
         }
+        /// --- START METRICS CALCULATION ---
+        int end_time = uptime(); // Record end time of the round
+        int duration = start_time - end_time;
+
+        /// --- Throughput calculation ---        
+        throughputs[i] = total_processes / duration; // Processes per second
+        float norm_throughput = get_normalized_throughput(duration, throughputs, i);
+        printf("VAZAO: %f", norm_throughput);
+
     } 
     // free(file_path);
 

@@ -10,11 +10,13 @@ void io_bound(char file_path[]) {
     for (int i = 0; i < NUM_STRINGS; i++) {
         write_random_string(file_path);
     }
+    printf("finished writing\n");
 
     // --- Executing line permutations ---
     for (int i = 0; i < NUM_PERMUT; i++) {
         permute_line(file_path);
     }
+    printf("finished permuting\n");
 
     if (unlink(file_path) != 0) {
         printf("Error when trying to delete file 'output.txt'\n");

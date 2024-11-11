@@ -6,7 +6,6 @@
 
 #include <assert.h>
 
-
 int permute_line(char file_path[]) {
     int fp = open(file_path, O_RDONLY);
     if (fp < 0 ) {
@@ -14,7 +13,7 @@ int permute_line(char file_path[]) {
         return -1;
     }
 
-    // char lines[NUM_STRINGS][STRING_SIZE];
+
     char** lines = malloc(NUM_STRINGS * sizeof(char*));
     for (int i = 0; i < NUM_STRINGS; i++) {
         lines[i] = malloc(STRING_SIZE * sizeof(char));

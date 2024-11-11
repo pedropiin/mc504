@@ -70,6 +70,8 @@ int write_random_string(char file_path[]) {
     
     generate_random_string(s, char_set, size_char_set);
     add_line(file_path, s);
+    
+    free(s);
 
     return 0;
 }
