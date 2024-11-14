@@ -5,6 +5,6 @@
 #define NUM_STRINGS 100
 #define NUM_PERMUT 50
 
-int permute_line(char file_path[]);
+int permute_line(char file_path[], int *t_read, int *t_write_second);
 
 #endif

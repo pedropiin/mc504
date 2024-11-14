@@ -18,7 +18,7 @@ void generate_random_string(char* s, const char char_set[], const size_t size_ch
     s[STRING_SIZE - 1] = '\0';
 }
 
-int write_random_string(char file_path[]) {
+int write_random_string(char file_path[], int *t_write) {
     // --- Defining set of possible characters for the string --- 
     const char char_set[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?'!@#$&*()-+{}[].;,<>:|";
     const size_t size_char_set = sizeof(char_set) - 1;
@@ -26,10 +26,17 @@ int write_random_string(char file_path[]) {
     
     // --- Generating and writing 100 random strings ---
     int fp = open(file_path, O_WRONLY | O_CREATE);  
+
+    int old_time;
+    int count_ticks = 0;                            // counts the number of ticks that took to complete the whole 100 write() syscalls
     for (int i = 0; i < NUM_STRINGS; i++) {
         generate_random_string(s, char_set, size_char_set);
+        old_time = uptime();
         write(fp, s, STRING_SIZE);
+        count_ticks += (uptime() - old_time);
     }
+
+    *t_write = (NUM_STRINGS * 10000) / count_ticks;    // number of write syscalls * 100 by number of seconds
 
     close(fp);
     free(s);

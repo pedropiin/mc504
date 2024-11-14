@@ -6,7 +6,7 @@
 
 #include <assert.h>
 
-int permute_line(char file_path[]) {
+int permute_line(char file_path[], int *t_read, int *t_write_second) {
     int fp = open(file_path, O_RDONLY);
     if (fp < 0 ) {
         printf("Failed when trying to open file in the permutation routine. Aborting\n");
@@ -19,12 +19,19 @@ int permute_line(char file_path[]) {
         lines[i] = malloc(STRING_SIZE * sizeof(char));
     }
 
-    int line_idx=0;
+    int line_idx = 0;
     // --- Reading all lines from the file ---
+    int old_time = uptime(), new_time;
+    int count_ticks = 0;
     while (read(fp, lines[line_idx], STRING_SIZE-1) > 0 && line_idx < NUM_STRINGS) {
+        new_time = uptime();
+        count_ticks += (new_time - old_time);
+        old_time = new_time;
         line_idx++;
     }
     close(fp);  
+
+    *t_read = (NUM_STRINGS * 10000) / count_ticks;     // number of read syscalls * 100 by number of seconds
 
     int line1, line2;
     char *temp = malloc(STRING_SIZE);
@@ -58,10 +65,15 @@ int permute_line(char file_path[]) {
         return -1;
     }
 
+    count_ticks = 0;
     for (int i = 0; i < line_idx; i++) {
+        old_time = uptime();
         write(fp, lines[i], STRING_SIZE);
+        count_ticks += (uptime() - old_time);
     }
 
+    *t_write_second = (NUM_STRINGS * 10000) / count_ticks;       // number of write syscalls * 100 by number of seconds
+    
     close(fp);
 
     for (int i = 0; i < NUM_STRINGS; i++) {

@@ -43,9 +43,9 @@ int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
 void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist);
 int random();
-int permute_line(char file_path[]);
-int write_random_string(char file_path[]);
-void io_bound(char file_path[]);
+int permute_line(char file_path[], int *t_read, int *t_write_second);
+int write_random_string(char file_path[], int *t_write);
+void io_bound(char file_path[], int *efficiency);
 void cpu_bound();
 int get_normalized_throughput(int duration, int *throughputs, int round, int *min_throughput, int *max_throughput);
 
