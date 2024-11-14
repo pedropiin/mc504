@@ -71,15 +71,16 @@ int main(int argc, char *argv[]) {
             if ((d_time_new - d_time_old) > 100) {
                 printf("passed one second with d_time_new = %d and dtime_old = %d\n", d_time_new, d_time_old);
                 // one second passed by
-                count_ticks += (d_time_new - d_time_old);
-                d_time_old = d_time_new;
-                if (process_count_sec > max_throughput) {
-                    max_throughput = process_count_sec;
+                int temp = (process_count_sec * 10000) / (d_time_new - d_time_old);
+                if (temp > max_throughput) {
+                    max_throughput = temp;
                 }
-                if (process_count_sec < min_throughput) {
-                    min_throughput = process_count_sec;
+                if (temp < min_throughput) {
+                    min_throughput = temp;
                 }
                 process_count_sec = 0;
+                count_ticks += (d_time_new - d_time_old);
+                d_time_old = d_time_new;
             }
 
             // --- IO BOUND ---
@@ -103,15 +104,16 @@ int main(int argc, char *argv[]) {
             if ((d_time_new - d_time_old) > 100) {
                 printf("passed one second with d_time_new = %d and dtime_old = %d\n", d_time_new, d_time_old);
                 // one second passed by
-                count_ticks += (d_time_new - d_time_old);
-                d_time_old = d_time_new;
-                if (process_count_sec > max_throughput) {
-                    max_throughput = process_count_sec;
+                int temp = (process_count_sec * 10000) / (d_time_new - d_time_old);
+                if (temp > max_throughput) {
+                    max_throughput = temp;
                 }
-                if (process_count_sec < min_throughput) {
-                    min_throughput = process_count_sec;
+                if (temp < min_throughput) {
+                    min_throughput = temp;
                 }
                 process_count_sec = 0;
+                count_ticks += (d_time_new - d_time_old);
+                d_time_old = d_time_new;
             }
         }
 
@@ -128,9 +130,9 @@ int main(int argc, char *argv[]) {
         printf("throughput of the round %d\n", throughputs[i]);
         printf("sumthroughput %d\n", sum_throughput);
         printf("avgthroughput %d\n", avg_throughput);
-        printf("before norm %d\n", (avg_throughput - (min_throughput * 100)) / (max_throughput - min_throughput));
+        printf("before norm %d\n", ((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
 
-        int norm_throughput = 100 - ((avg_throughput - (min_throughput * 100)) / (max_throughput - min_throughput));
+        int norm_throughput = 100 - (((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
         printf("normalized throughput of round %d is = ", i);
         print_float(norm_throughput);
 

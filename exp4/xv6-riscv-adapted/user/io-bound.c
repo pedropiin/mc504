@@ -29,5 +29,7 @@ void io_bound(char file_path[], int *efficiency) {
 
     // ---- Calculating efficiency metric ---
     int denominator_efficiency = t_read + t_write + t_del;
-    *efficiency += (1 * 10000) / denominator_efficiency;      // efficiency multiplied by big constant so we are able to print 2 decimal places
+    printf("denominator_efficiency = %d\n", denominator_efficiency);
+    *efficiency += (1 * 1000000) / denominator_efficiency;      // efficiency multiplied by big constant so we are able to print 2 decimal places
+    printf("efficiency inside io_bound = %d\n", *efficiency);
 }

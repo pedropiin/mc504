@@ -24,6 +24,7 @@ int permute_line(char file_path[], int *t_read, int *t_write_second) {
     int old_time = uptime(), new_time;
     int count_ticks = 0;
     while (read(fp, lines[line_idx], STRING_SIZE-1) > 0 && line_idx < NUM_STRINGS) {
+        printf("one more iteration of the read while with count_ticks = %d\n", count_ticks);
         new_time = uptime();
         count_ticks += (new_time - old_time);
         old_time = new_time;
