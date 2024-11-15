@@ -24,7 +24,6 @@ int permute_line(char file_path[], int *t_read, int *t_write_second) {
     int old_time = uptime(), new_time;
     int count_ticks = 0;
     while (read(fp, lines[line_idx], STRING_SIZE-1) > 0 && line_idx < NUM_STRINGS) {
-        printf("one more iteration of the read while with count_ticks = %d\n", count_ticks);
         new_time = uptime();
         count_ticks += (new_time - old_time);
         old_time = new_time;
@@ -32,7 +31,7 @@ int permute_line(char file_path[], int *t_read, int *t_write_second) {
     }
     close(fp);  
 
-    *t_read = (NUM_STRINGS * 10000) / count_ticks;     // number of read syscalls * 100 by number of seconds
+    *t_read = (NUM_STRINGS * 10000) / (count_ticks + 1);     // number of read syscalls * 100 by number of seconds. Adding one to count_ticks to assure non-zero division
 
     int line1, line2;
     char *temp = malloc(STRING_SIZE);
