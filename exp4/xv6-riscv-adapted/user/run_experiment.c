@@ -14,6 +14,8 @@ int main(int argc, char *argv[]) {
     int execs_cpu;
     int execs_io;
 
+    int memory_time = 0;
+
     // --- Declaring and initializing variables related to the throughput metric ---
     int *throughputs = malloc(NUM_ROUNDS * sizeof(int));
 
@@ -57,7 +59,7 @@ int main(int argc, char *argv[]) {
                 int status;
                 if (p == 0) {
                     printf("starting cpu\n");
-                    cpu_bound();
+                    cpu_bound(&memory_time);
                     exit(EXIT_SUCCESS);
                 }
                 wait(&status);
@@ -90,7 +92,7 @@ int main(int argc, char *argv[]) {
                 int status;
                 if (p == 0) {
                     printf("starting io\n");
-                    io_bound(file_path, &efficiency);
+                    io_bound(file_path, &efficiency, &memory_time);
                     exit(EXIT_SUCCESS);
                 }
                 wait(&status);

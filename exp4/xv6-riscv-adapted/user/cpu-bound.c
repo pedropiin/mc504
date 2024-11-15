@@ -9,16 +9,20 @@ minimum path problems in random graphs
 #include "../kernel/types.h"
 #include "user.h"
 
-void cpu_bound() {
+void cpu_bound(int *memory_time) {
     // --- Executing the 1000 rounds of generating a random graph ---
     // --- and calculating the minimal distance between the edges ---
+    
+    int start_time = uptime();
     int** graph = (int**)malloc(MAX_VERT * sizeof(int*));
     for (int i = 0; i < MAX_VERT; i++) {
         graph[i] = (int*)malloc(MAX_VERT * sizeof(int));
     }
-    
     int* dist = malloc(MAX_VERT * sizeof(int));
+    int finish_time = uptime();
     
+    *memory_time += finish_time - start_time + 1;
+    printf("start_time = %d and finish_time = %d\n", start_time, finish_time);
     for (int i = 0; i < NUM_GRAPHS; i++) {
         
         int num_vertices;
@@ -32,14 +36,19 @@ void cpu_bound() {
         // printf("EDGES: %d\n", num_edges);
 
 
-        dijkstra(graph, num_vertices, num_edges, 0, dist);
+        dijkstra(graph, num_vertices, num_edges, 0, dist, memory_time);
         
     }
     
+    start_time = uptime();    
     for (int i = 0; i < MAX_VERT; i++) {
         free(graph[i]);
     }
     free(graph);
     free(dist);
 
+    finish_time = uptime();
+    *memory_time += finish_time - start_time + 1;
+    printf("start_time = %d and finish_time = %d\n", start_time, finish_time);
+    printf("memory_time inside cpu_bound = %d\n", *memory_time);
 }
