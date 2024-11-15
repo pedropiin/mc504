@@ -34,7 +34,7 @@ int permute_line(char file_path[], int *t_read, int *t_write_second, int *memory
     }
     close(fp);  
 
-    *t_read = (NUM_STRINGS * 10000) / count_ticks;     // number of read syscalls * 100 by number of seconds
+    *t_read = (NUM_STRINGS * 10000) / (count_ticks + 1);     // number of read syscalls * 100 by number of seconds. Adding one to count_ticks to assure non-zero division
 
     int line1, line2;
     

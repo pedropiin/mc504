@@ -7,12 +7,17 @@
 #define EXIT_SUCCESS 0
 
 void print_float(int value) {
-    printf("%d.%d\n", (value / 100), (value % 100));
+    if (value < 10) {
+        printf("0.0%d\n", value);
+    } else {
+        printf("%d.%d\n", (value / 100), (value % 100));
+    }
 }
 
 int main(int argc, char *argv[]) {
     int execs_cpu;
     int execs_io;
+    int const_execs_io;
 
     int memory_time = 0;
 
@@ -25,54 +30,55 @@ int main(int argc, char *argv[]) {
 
     // --- Executing 30 rounds of the experiment ---
     for (int i = 0; i < NUM_ROUNDS; i++) {
-        printf("ROUND: %d\n", i);
-        // DO NOT ERASE THE COMENTS BELOW, i commented so i could use smaller numbers and get faster executions
-        // also changed num_rounds for 3 instead of 30 
+        // --- STARTING NEW ROUND ---
+        printf("####### STARTING ROUND %d #######\n", (i + 1));
+        execs_cpu = (random() % 9) + 6;
+        execs_io = 20 - execs_cpu;
+        const_execs_io = execs_io;
 
-        // execs_cpu = (random() % 9) + 6;
-        // execs_io = 20 - execs_cpu;
+        // --- TEST VALUES ---
+        // execs_cpu = random() % 3 + 1;
+        // execs_io = 6 - execs_cpu;
+        // int const_execs_io = execs_io;
 
         // --- EFFICIENCY METRIC VARIABLES ---
-        int efficiency = 0;                 // Efficiency value multiplied by 100 
+        int efficiency = 0;                             // Efficiency value multiplied by 100
 
         // --- THROUGHPUT METRIC VARIABLES ---
-        int process_count_sec = 0;          // Number of processses completed during one second
-        int count_ticks = 0;                // Number of seconds passed during the experiment
-        int start_time = uptime();          // Record start time of the round
+        int process_count_sec = 0;                      // Number of processses completed during one second
+        int count_ticks = 0;                            // Number of seconds passed during the experiment
+        int start_time = uptime();                      // Record start time of the round
         int d_time_new;
-        int d_time_old = start_time;        // Number of ticks before one second 
+        int d_time_old = start_time;                    // Number of ticks before one second 
         int max_throughput = 0;
         int min_throughput = __INT32_MAX__;
 
-        execs_cpu = random() % 3 + 1;
-        execs_io = 6 - execs_cpu;
-        int total_processes = execs_cpu + execs_io;
+        int total_processes = execs_cpu + execs_io;     // Number of processes that will be executed through the round
 
-
-        printf("EXECS CPU: %d / EXECS IO: %d\n", execs_cpu, execs_io);
         while (execs_cpu > 0 || execs_io > 0) {
 
             // --- CPU BOUND ---
             if (execs_cpu > 0) {
-                // Executing one iteration of CPU-bound
+                // Dealing with fork and child process
                 int p = fork();
                 int status;
                 if (p == 0) {
-                    printf("starting cpu\n");
-                    cpu_bound(&memory_time);
+                    // Executing one iteration of cpu_bound
+                    cpu_bound();
+
                     exit(EXIT_SUCCESS);
                 }
                 wait(&status);
+
+                // Adjusting counter variables
                 execs_cpu--;
                 process_count_sec++;
-                printf("finished for cpu now %d\n", execs_cpu);
             }
 
             // --- Adjusting min/max throughput values ---
             d_time_new = uptime();
             if ((d_time_new - d_time_old) > 100) {
-                printf("passed one second with d_time_new = %d and dtime_old = %d\n", d_time_new, d_time_old);
-                // one second passed by
+                // At least one second passed by
                 int temp = (process_count_sec * 10000) / (d_time_new - d_time_old);
                 if (temp > max_throughput) {
                     max_throughput = temp;
@@ -87,25 +93,39 @@ int main(int argc, char *argv[]) {
 
             // --- IO BOUND ---
             if (execs_io > 0) {
-                // Executing one iteration of IO-bound
+                // Creating pipe to pass values from child process to parent
+                int *fd = malloc(sizeof(int) * 2);
+                pipe(fd);
+                
+                // Dealing with fork and child process
                 int p = fork();
                 int status;
                 if (p == 0) {
-                    printf("starting io\n");
-                    io_bound(file_path, &efficiency, &memory_time);
+                    close(fd[0]);
+                    // Executing one iteration of IO-bound
+                    io_bound(file_path, &efficiency);
+                    
+                    // Passing efficiency value to pipe and closing file descriptor
+                    write(fd[1], &efficiency, sizeof(efficiency));
+                    close(fd[1]);
+
                     exit(EXIT_SUCCESS);
                 }
+                // Getting efficiency value from pipe and closing file descriptor
+                close(fd[1]);
+                read(fd[0], &efficiency, sizeof(efficiency));
+                close(fd[0]);
                 wait(&status);
+
+                // Adjusting counter variables
                 execs_io--;
                 process_count_sec++;
-                printf("finished for io now %d\n", execs_io);
             }
 
             // --- Adjusting min/max throughput values ---
             d_time_new = uptime();
             if ((d_time_new - d_time_old) > 100) {
-                printf("passed one second with d_time_new = %d and dtime_old = %d\n", d_time_new, d_time_old);
-                // one second passed by
+                // At least one second passed by
                 int temp = (process_count_sec * 10000) / (d_time_new - d_time_old);
                 if (temp > max_throughput) {
                     max_throughput = temp;
@@ -119,7 +139,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // --- Calculating throughput values of the finished round ---
+        // --- CALCULATING NON-NORMALIZED THROUGHPUT VALUES OF THE FINISHED ROUND ---
         throughputs[i] = (total_processes * 10000) / count_ticks;   // Throughput of the round
         sum_throughput += throughputs[i];                           // Adding the throughput of the round into the sum of throughput values of the experiment
         int avg_throughput = (sum_throughput / (i + 1));            // Adjusting avg_throughput to consider this round
@@ -128,20 +148,19 @@ int main(int argc, char *argv[]) {
             // Adjusting to guarantee non-zero division
             max_throughput++;
         }
-        printf("minthrought = %d and maxthroughput = %d\n", min_throughput, max_throughput);
-        printf("throughput of the round %d\n", throughputs[i]);
-        printf("sumthroughput %d\n", sum_throughput);
-        printf("avgthroughput %d\n", avg_throughput);
-        printf("before norm %d\n", ((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
 
+        // --- PRINTING NORMALIZED THROUGHPUT ---
         int norm_throughput = 100 - (((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
-        printf("normalized throughput of round %d is = ", i);
+        printf("NORMALIZED THROUGHPUT: ");
         print_float(norm_throughput);
 
-        // --- Printing efficiency values ---
-        printf("efficiency before float: %d\n", efficiency);
-        printf("EFFICIENCY: ");
+        // --- CALCULATING AVERAGE AND PRINTING EFFICIENCY ---
+        efficiency /= const_execs_io;
+        printf("FILE SYSTEM EFFICIENCY: ");
         print_float(efficiency);
+
+        // --- ENDING CURRENT ROUND ---
+        printf("####### FINISHED ROUND %d #######\n\n", (i + 1));
     } 
     free(throughputs);
 
