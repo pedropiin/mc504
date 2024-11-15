@@ -2,7 +2,7 @@ struct stat;
 
 #define MAX_VERT 200
 #define MAX_EDGE 400
-#define NUM_ROUNDS 3
+#define NUM_ROUNDS 30
 
 // system calls
 int fork(void);
