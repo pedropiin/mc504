@@ -12,6 +12,6 @@ the minimum distance in a directed graph
 
 int min_distance_vertex(int* dist, int* visited, int num_vertices);
 
-void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist);
+void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist, int *memory_time);
 
 #endif 

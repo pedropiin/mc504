@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
     int execs_io;
     int const_execs_io;
 
+    int memory_time = 0;
+
     // --- Declaring and initializing variables related to the throughput metric ---
     int *throughputs = malloc(NUM_ROUNDS * sizeof(int));
 
@@ -63,6 +65,7 @@ int main(int argc, char *argv[]) {
                 if (p == 0) {
                     // Executing one iteration of cpu_bound
                     cpu_bound();
+
                     exit(EXIT_SUCCESS);
                 }
                 wait(&status);
@@ -105,6 +108,7 @@ int main(int argc, char *argv[]) {
                     // Passing efficiency value to pipe and closing file descriptor
                     write(fd[1], &efficiency, sizeof(efficiency));
                     close(fd[1]);
+
                     exit(EXIT_SUCCESS);
                 }
                 // Getting efficiency value from pipe and closing file descriptor
