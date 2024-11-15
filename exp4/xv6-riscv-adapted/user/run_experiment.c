@@ -9,7 +9,6 @@ void print_float(int value) {
     if (value < 10) {
         printf("0.0%d\n", value);
     } else {
-        printf("value: %d rest: %d\n", (value / 100), (value % 100));
         printf("%d.%d\n", (value / 100), (value % 100));
     }
 }
@@ -30,13 +29,10 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < NUM_ROUNDS; i++) {
         // --- STARTING NEW ROUND ---
         printf("####### STARTING ROUND %d #######\n", (i + 1));
-        // execs_cpu = (random() % 9) + 6;
-        // execs_io = 20 - execs_cpu;
-        // const_execs_io = execs_io;
 
-        // --- TEST VALUES ---
-        execs_cpu = random() % 3 + 1;
-        execs_io = 6 - execs_cpu;
+        // --- SETTING THE AMOUNT OF ITERATIONS ---
+        execs_cpu = (random() % 9) + 6;
+        execs_io = 20 - execs_cpu;
         const_execs_io = execs_io;
 
         // --- THROUGHPUT METRIC VARIABLES ---
@@ -44,6 +40,7 @@ int main(int argc, char *argv[]) {
         int count_throughs = 0;
         int sum_throughput = 0;                             // Holds the sum of the throughput values through the whole experiment
         int avg_throughput;
+        int norm_throughput;
         int count_ticks = 0;                                // Number of seconds passed during the experiment
         int start_time = uptime();                          // Record start time of the round
         int d_time_new;
@@ -52,15 +49,18 @@ int main(int argc, char *argv[]) {
         int max_throughput = 0;
         int min_throughput = __INT32_MAX__;
 
-        // --- EFFICIENCY METRIC VARIABLES ---
-        int efficiency = 0;                                 // Efficiency value multiplied by 100
-
         // --- JUSTICE METRIC VARIABLES ---
         int justice;
         int time_processes = 0;                             // Number of ticks that the processes take to complete
         int time_processes_sq = 0;
         int tick_count_before_p;
         int tick_count_after_p;
+
+        // --- EFFICIENCY METRIC VARIABLES ---
+        int efficiency = 0;                                 // Efficiency value multiplied by 100
+
+        // --- MEMORY TIME METRIC VARIABLES ---
+        int memory_time = 0;
 
         int total_process_count = execs_cpu + execs_io;     // Number of processes that will be executed through the round
 
@@ -198,39 +198,25 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // --- CALCULATING NON-NORMALIZED THROUGHPUT VALUES OF THE FINISHED ROUND ---
-        for (int j = 0; j < count_throughs; j++) {
-            sum_throughput += throughputs[j];
-        }
-        avg_throughput = sum_throughput / count_throughs;
-
+        // --- ASSURING NON-ZERO DIVISION IN THROUGHPUT CALCULATION ---
         if (max_throughput == min_throughput) {
             // Adjusting to guarantee non-zero division
             max_throughput++;
         }
-        if (avg_throughput <= min_throughput) {
-            // Adjusting to guarantee positive numbers
-            avg_throughput = (max_throughput + min_throughput) / 2;
+
+        // --- CALCULATING AND PRINTING THROUGHPUT VALUES OF THE FINISHED ROUND ---
+        for (int j = 0; j < count_throughs; j++) {
+            sum_throughput += throughputs[j];
         }
+        avg_throughput = sum_throughput / count_throughs;
+        norm_throughput = 100 - (((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
+        printf("NORMALIZED THROUGHPUT: ");
+        print_float(norm_throughput);
 
         // --- CALCULATING AND PRINTING JUSTICE METRIC ---
         justice = ((time_processes * time_processes) * 100) / (total_process_count * time_processes_sq);
         printf("JUSTICE BETWEEN PROCESSES: ");
         print_float(justice);
-
-        // --- PRINTING NORMALIZED THROUGHPUT ---
-        printf("avg_throughput: %d max_throughput: %d min_throughput: %d \n", avg_throughput, max_throughput, min_throughput);
-        int norm_throughput = (((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
-        printf("avg - min: %d max - min: %d \n", (avg_throughput - min_throughput), (max_throughput - min_throughput));  
-        if (norm_throughput > 100) {
-            norm_throughput = 1000 - norm_throughput;
-        }
-        else if (norm_throughput < 0) {
-            norm_throughput = 100 - norm_throughput;
-        }
-        
-        printf("NORMALIZED THROUGHPUT: ");
-        print_float(norm_throughput);
 
         // --- CALCULATING AVERAGE AND PRINTING EFFICIENCY ---
         efficiency /= const_execs_io;
@@ -238,7 +224,7 @@ int main(int argc, char *argv[]) {
         print_float(efficiency);
 
         // --- PRINTING MEMORY TIME METRIC ---
-        memory_time = 10000/(memory_time + 1);
+        memory_time = 10000 / (memory_time + 1);
         printf("MEMORY TIME METRIC: ");
         print_float(memory_time);
 
