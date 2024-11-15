@@ -22,7 +22,7 @@ void cpu_bound(int *memory_time) {
     int finish_time = uptime();
     
     *memory_time += finish_time - start_time + 1;
-    printf("start_time = %d and finish_time = %d\n", start_time, finish_time);
+    
     for (int i = 0; i < NUM_GRAPHS; i++) {
         
         int num_vertices;
@@ -49,6 +49,4 @@ void cpu_bound(int *memory_time) {
 
     finish_time = uptime();
     *memory_time += finish_time - start_time + 1;
-    printf("start_time = %d and finish_time = %d\n", start_time, finish_time);
-    printf("memory_time inside cpu_bound = %d\n", *memory_time);
 }

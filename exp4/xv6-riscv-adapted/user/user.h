@@ -2,7 +2,7 @@ struct stat;
 
 #define MAX_VERT 200
 #define MAX_EDGE 400
-#define NUM_ROUNDS 3
+#define NUM_ROUNDS 30
 
 // system calls
 int fork(void);
@@ -47,7 +47,6 @@ int permute_line(char file_path[], int *t_read, int *t_write_second, int *memory
 int write_random_string(char file_path[], int *t_write, int *memory_time);
 void io_bound(char file_path[], int *efficiency, int *memory_time);
 void cpu_bound(int *memory_time);
-int get_normalized_throughput(int duration, int *throughputs, int round, int *min_throughput, int *max_throughput);
 
 
 // temp

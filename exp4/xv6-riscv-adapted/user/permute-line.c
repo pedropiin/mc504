@@ -41,7 +41,7 @@ int permute_line(char file_path[], int *t_read, int *t_write_second, int *memory
     start_time = uptime();
     char *temp = malloc(STRING_SIZE);
     finish_time = uptime();
-    *memory_time += finish_time - start_time;
+    *memory_time += finish_time - start_time + 1;
 
     for (int i = 0; i < NUM_PERMUT; i++) {
         // --- Getting random indices representing lines to be changed ---
@@ -62,16 +62,19 @@ int permute_line(char file_path[], int *t_read, int *t_write_second, int *memory
     // --- Fill buffer with zeroes to clear the file ---
     struct stat st;
     fstat(fp, &st);
+
     start_time = uptime();
     char *buffer = malloc(0);
     finish_time = uptime();
-    *memory_time += finish_time - start_time;
+    *memory_time += finish_time - start_time + 1;
+    
     memset(buffer, 0, 0);  
     write(fp, buffer, 0);
+
     start_time = uptime();
     free(buffer);
     finish_time = uptime();
-    *memory_time += finish_time - start_time;
+    *memory_time += finish_time - start_time + 1;
 
     // --- Write the modified content back to the file ---
     if (fp < 0) {
@@ -94,9 +97,9 @@ int permute_line(char file_path[], int *t_read, int *t_write_second, int *memory
     for (int i = 0; i < NUM_STRINGS; i++) {
         free(lines[i]);
     }
-
     free(lines);
     finish_time = uptime();
-    *memory_time += finish_time - start_time;
+    *memory_time += finish_time - start_time + 1;
+    
     return 0;
 }
