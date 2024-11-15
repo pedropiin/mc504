@@ -3,6 +3,6 @@
 
 #define NUM_GRAPHS 1000
 
-void cpu_bound();
+void cpu_bound(int *memory_time);
 
 #endif

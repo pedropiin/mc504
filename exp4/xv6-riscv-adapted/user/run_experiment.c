@@ -1,6 +1,5 @@
 #include "cpu-bound.h"
 #include "io-bound.h"
-#include "metrics.h"
 #include "../kernel/types.h"
 #include "user.h"
 
@@ -10,6 +9,7 @@ void print_float(int value) {
     if (value < 10) {
         printf("0.0%d\n", value);
     } else {
+        printf("value: %d rest: %d\n", (value / 100), (value % 100));
         printf("%d.%d\n", (value / 100), (value % 100));
     }
 }
@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
     int execs_cpu;
     int execs_io;
     int const_execs_io;
+
 
     // --- Declaring and initializing variables related to the throughput metric ---
     int *throughputs = malloc(NUM_ROUNDS * sizeof(int) * 2);
@@ -70,14 +71,32 @@ int main(int argc, char *argv[]) {
                 // Setting tick count
                 tick_count_before_p = uptime();
 
+                // Creating pipe to pass values from child process to parent
+                int start_time = uptime();
+                int *fd = malloc(sizeof(int) * 2);
+                int finish_time = uptime();
+                memory_time += finish_time - start_time + 1;
+                pipe(fd);
+                
                 // Dealing with fork and child process
                 int p = fork();
                 int status;
                 if (p == 0) {
+                    close(fd[0]);
                     // Executing one iteration of cpu_bound
-                    cpu_bound();
+                    cpu_bound(&memory_time);
+
+                    // Passing memory value to pipe and closing file descriptor
+                    write(fd[1], &memory_time, sizeof(memory_time));
+                    close(fd[1]);
+
+
                     exit(EXIT_SUCCESS);
                 }
+                // Getting memory_time value from pipe and closing file descriptor
+                close(fd[1]);
+                read(fd[0], &memory_time, sizeof(memory_time));
+                close(fd[0]);
                 wait(&status);
 
                 // Adjusting counter variables
@@ -114,26 +133,40 @@ int main(int argc, char *argv[]) {
                 tick_count_before_p = uptime();
 
                 // Creating pipe to pass values from child process to parent
-                int *fd = malloc(sizeof(int) * 2);
-                pipe(fd);
+                int *fd_files = malloc(sizeof(int) * 2);
+                pipe(fd_files);
+                int *fd_memory = malloc(sizeof(int) * 2);
+                pipe(fd_memory);
+                
                 
                 // Dealing with fork and child process
                 int p = fork();
                 int status;
                 if (p == 0) {
-                    close(fd[0]);
+                    close(fd_files[0]);
+                    close(fd_memory[0]);
                     // Executing one iteration of IO-bound
-                    io_bound(file_path, &efficiency);
+                    io_bound(file_path, &efficiency, &memory_time);
                     
                     // Passing efficiency value to pipe and closing file descriptor
-                    write(fd[1], &efficiency, sizeof(efficiency));
-                    close(fd[1]);
+                    write(fd_files[1], &efficiency, sizeof(efficiency));
+                    // Passing memory value to pipe and closing file descriptor
+                    write(fd_memory[1], &memory_time, sizeof(memory_time));
+                    
+                    close(fd_files[1]);
+                    close(fd_memory[1]);
+
                     exit(EXIT_SUCCESS);
                 }
                 // Getting efficiency value from pipe and closing file descriptor
-                close(fd[1]);
-                read(fd[0], &efficiency, sizeof(efficiency));
-                close(fd[0]);
+                close(fd_files[1]);
+                read(fd_files[0], &efficiency, sizeof(efficiency));
+                close(fd_files[0]);
+                // Getting memory_time value from pipe and closing file descriptor
+                close(fd_memory[1]);
+                read(fd_memory[0], &memory_time, sizeof(memory_time));
+                close(fd_memory[0]);
+
                 wait(&status);
 
                 // Adjusting counter variables
@@ -175,6 +208,10 @@ int main(int argc, char *argv[]) {
             // Adjusting to guarantee non-zero division
             max_throughput++;
         }
+        if (avg_throughput <= min_throughput) {
+            // Adjusting to guarantee positive numbers
+            avg_throughput = (max_throughput + min_throughput) / 2;
+        }
 
         // --- CALCULATING AND PRINTING JUSTICE METRIC ---
         justice = ((time_processes * time_processes) * 100) / (total_process_count * time_processes_sq);
@@ -182,7 +219,16 @@ int main(int argc, char *argv[]) {
         print_float(justice);
 
         // --- PRINTING NORMALIZED THROUGHPUT ---
-        int norm_throughput = 100 - (((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
+        printf("avg_throughput: %d max_throughput: %d min_throughput: %d \n", avg_throughput, max_throughput, min_throughput);
+        int norm_throughput = (((avg_throughput - min_throughput) * 100) / (max_throughput - min_throughput));
+        printf("avg - min: %d max - min: %d \n", (avg_throughput - min_throughput), (max_throughput - min_throughput));  
+        if (norm_throughput > 100) {
+            norm_throughput = 1000 - norm_throughput;
+        }
+        else if (norm_throughput < 0) {
+            norm_throughput = 100 - norm_throughput;
+        }
+        
         printf("NORMALIZED THROUGHPUT: ");
         print_float(norm_throughput);
 
@@ -190,6 +236,11 @@ int main(int argc, char *argv[]) {
         efficiency /= const_execs_io;
         printf("FILE SYSTEM EFFICIENCY: ");
         print_float(efficiency);
+
+        // --- PRINTING MEMORY TIME METRIC ---
+        memory_time = 10000/(memory_time + 1);
+        printf("MEMORY TIME METRIC: ");
+        print_float(memory_time);
 
         // --- ENDING CURRENT ROUND ---
         printf("####### FINISHED ROUND %d #######\n\n", (i + 1));

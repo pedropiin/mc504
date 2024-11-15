@@ -14,6 +14,6 @@
 
 void generate_random_string(char* s, const char char_set[], const size_t size_char_set);
 
-int write_random_string(char file_path[], int *t_write);
+int write_random_string(char file_path[], int *t_write, int *memory_time);
 
 #endif 

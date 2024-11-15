@@ -94,8 +94,7 @@ $U/initcode: $U/initcode.S
 tags: $(OBJS) _init
 	etags *.S *.c
 
-ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o $U/dijkstra.o $U/random-digraph.o $U/rand.o $U/permute-line.o $U/write-random-string.o $U/io-bound.o $U/cpu-bound.o $U/metrics.o
-
+ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o $U/dijkstra.o $U/random-digraph.o $U/rand.o $U/permute-line.o $U/write-random-string.o $U/io-bound.o $U/cpu-bound.o 
 _%: %.o $(ULIB)
 	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $^
 	$(OBJDUMP) -S $@ > $*.asm

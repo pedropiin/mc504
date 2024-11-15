@@ -22,10 +22,13 @@ int min_distance_vertex(int* dist, int* visited, int num_vertices) {
     return min_idx;
 }
 
-void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist) {
+void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist, int* memory_time) {
     // --- Initializing distance array and visited array
+    int start_time = uptime();
     int* visited = malloc(num_vertices*sizeof(int));
- 
+    int finish_time = uptime();
+    *memory_time += finish_time - start_time + 1;
+
     for (int i = 0; i < num_vertices; i++) {
         dist[i] = INF;
         visited[i] = 0;
@@ -48,5 +51,9 @@ void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist) 
             }
         }
     }
+
+    start_time = uptime();
     free(visited);
+    finish_time = uptime();
+    *memory_time += finish_time - start_time + 1;
 }

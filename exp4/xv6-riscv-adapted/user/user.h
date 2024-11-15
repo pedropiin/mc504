@@ -41,13 +41,12 @@ void* memset(void*, int, uint);
 int atoi(const char*);
 int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
-void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist);
+void dijkstra(int** graph, int num_vertices, int num_edges, int src, int* dist, int *memory_time);
 int random();
-int permute_line(char file_path[], int *t_read, int *t_write_second);
-int write_random_string(char file_path[], int *t_write);
-void io_bound(char file_path[], int *efficiency);
-void cpu_bound();
-int get_normalized_throughput(int duration, int *throughputs, int round, int *min_throughput, int *max_throughput);
+int permute_line(char file_path[], int *t_read, int *t_write_second, int *memory_time);
+int write_random_string(char file_path[], int *t_write, int *memory_time);
+void io_bound(char file_path[], int *efficiency, int *memory_time);
+void cpu_bound(int *memory_time);
 
 
 // temp
