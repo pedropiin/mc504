@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
         printf("NORMALIZED THROUGHPUT: ");
         print_float(norm_throughput);
 
-        // --- CALCULATING AND PRINTING JUSTICE METRIC ---
+        // --- CALCULATING AND PRINTING JUSTICE METRIC 
         justice = ((time_processes * time_processes) * 100) / (total_process_count * time_processes_sq);
         printf("JUSTICE BETWEEN PROCESSES: ");
         print_float(justice);
@@ -224,9 +224,14 @@ int main(int argc, char *argv[]) {
         print_float(efficiency);
 
         // --- PRINTING MEMORY TIME METRIC ---
-        memory_time = 10000 / (memory_time + 1);
+        memory_time = 100000 / (memory_time + 1);
         printf("MEMORY TIME METRIC: ");
         print_float(memory_time);
+
+        // --- CALCULATING SYSTEM OVERALL PERFORMANCE ---
+        int perform = ((25 * norm_throughput) + (25 * justice) + (25 * efficiency) + (25 * memory_time)) / 100;
+        printf("SYSTEM OVERALL PERFORMANCE: ");
+        print_float(perform);
 
         // --- ENDING CURRENT ROUND ---
         printf("####### FINISHED ROUND %d #######\n\n", (i + 1));
