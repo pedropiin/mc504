@@ -81,19 +81,19 @@ struct trapframe {
 
 enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
-// Per-process state
-struct proc {
+struct proc
+{
   struct spinlock lock;
 
   // p->lock must be held when using these:
-  enum procstate state;        // Process state
-  void *chan;                  // If non-zero, sleeping on chan
-  int killed;                  // If non-zero, have been killed
-  int xstate;                  // Exit status to be returned to parent's wait
-  int pid;                     // Process ID
+  enum procstate state; // Process state
+  void *chan;           // If non-zero, sleeping on chan
+  int killed;           // If non-zero, have been killed
+  int xstate;           // Exit status to be returned to parent's wait
+  int pid;              // Process ID
 
   // wait_lock must be held when using this:
-  struct proc *parent;         // Parent process
+  struct proc *parent; // Parent process
 
   // these are private to the process, so p->lock need not be held.
   uint64 kstack;               // Virtual address of kernel stack
@@ -104,4 +104,26 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  uint rtime;                  // How long the process ran for
+  uint ctime;                  // When was the process created
+  uint etime;                  // When did the process exited
+  int arrival_time;
+  int time_lapse;     // the alarm interval (ticks)
+  int ticks_passed;       // how many ticks have passed since the last call
+  uint64 alarm_handler;   // pointer to the alarm handler function
+  struct trapframe etpfm;
+  uint wtime;
+  uint stime;
+  uint times_sched;
+  uint staticpriority;
+  uint dynamicpriority;
+  uint rbi;
+  
+  // MLFQ
+    uint arrival_inqueue;             // Entry time in the current queue
+    uint time_inqueue[5];         // Number of ticks done in each queue
+    uint present_inqueue;          // Current queue number of the process
+  
 };
+
+extern struct proc proc[NPROC];
